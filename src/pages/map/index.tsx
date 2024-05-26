@@ -1,5 +1,7 @@
-import Head from "next/head"
 import React, {useEffect, useRef} from 'react';
+
+import Head from 'next/head';
+
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import styles from './styles.module.css';
@@ -27,7 +29,7 @@ export default function Map() {
         zoom: 4
       });
   
-      fetch('https://titiler.xyz/cog/tilejson.json?url=https://peterm790.s3.af-south-1.amazonaws.com/t2m_GFS.tif')
+      fetch('https://t9iixc9z74.execute-api.af-south-1.amazonaws.com/cog/tilejson.json?url=https://peterm790.s3.af-south-1.amazonaws.com/t2m_GFS.tif')
       .then(response => response.json())
       .then(tilejson => {
         // Extract relevant information from TileJSON
@@ -66,8 +68,13 @@ export default function Map() {
     }, []);
   
     return (
+      <>
+        <Head>
+          <title>Pete's Forecast</title> {/* Set your page title here */}
+        </Head>
         <div className={styles.mapwrap}>
           <div ref={mapContainerRef} className={styles.map}/>
         </div>
+      </>
     );
   }
