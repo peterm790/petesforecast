@@ -1,42 +1,39 @@
-import React, {useEffect, useRef} from 'react';
-
+import React, { useEffect, useRef } from 'react';
 import Head from 'next/head';
-
-import maplibregl from 'maplibre-gl';
+import maplibregl, { Map as MaplibreMap, NavigationControl, Marker } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import styles from './styles.module.css';
 import baseMapStyle from './baseMapStyle.json';
 import { Protocol } from 'pmtiles';
 
+const Map: React.FC = () => {
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
 
-export default function Map() {
+  useEffect(() => {
+    const protocol = new Protocol();
+    maplibregl.addProtocol("pmtiles", protocol.tile);
 
-    useEffect(() => {
-      let protocol = new Protocol();
-      maplibregl.addProtocol("pmtiles", protocol.tile);
-      return () => {
-        maplibregl.removeProtocol("pmtiles");
-      }
-    }, []);
-  
-    const mapContainerRef = useRef();
-  
-    useEffect(() => {
-      const map = new maplibregl.Map({
-        container: mapContainerRef.current,
-        style: baseMapStyle,
-        center: [20, -25],
-        zoom: 4
-      });
-  
-      fetch('https://t9iixc9z74.execute-api.af-south-1.amazonaws.com/cog/tilejson.json?url=https://peterm790.s3.af-south-1.amazonaws.com/t2m_GFS.tif')
+    return () => {
+      maplibregl.removeProtocol("pmtiles");
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!mapContainerRef.current) return;
+
+    const map: MaplibreMap = new maplibregl.Map({
+      container: mapContainerRef.current,
+      style: baseMapStyle as maplibregl.StyleSpecification,
+      center: [20, -25],
+      zoom: 4
+    });
+
+    fetch('https://t9iixc9z74.execute-api.af-south-1.amazonaws.com/cog/tilejson.json?url=https://peterm790.s3.af-south-1.amazonaws.com/t2m_GFS.tif')
       .then(response => response.json())
       .then(tilejson => {
-        // Extract relevant information from TileJSON
-        const { tiles, minzoom, maxzoom } = tilejson;
-    
-        // Add XYZ tile layer to the map
-        map.on('load', function () {
+        const { tiles } = tilejson; // We'll ignore minzoom and maxzoom here
+
+        map.on('load', () => {
           map.addLayer({
             id: 'xyz-tile-layer',
             type: 'raster',
@@ -45,37 +42,38 @@ export default function Map() {
               tiles: tiles,
               tileSize: 256,
             },
-            minzoom: 0,
-            maxzoom: 20,
+            minzoom: 0, // Set manually to 0
+            maxzoom: 20, // Set manually to 20
             paint: {
-              'raster-opacity': 0.55, // Set the opacity value (0.0 to 1.0)
+              'raster-opacity': 0.55,
             },
-          },'physical_line_stream');
+          }, 'physical_line_stream');
         });
       })
       .catch(error => console.error('Error fetching tilejson.json:', error));
-  
-      map.addControl(new maplibregl.NavigationControl(), 'top-right');
-  
-      new maplibregl.Marker({color: "#FF0000"})
-        .setLngLat([18,-35])
-        .addTo(map);
-  
-      return () => {
-        map.remove();
-      }
-  
-    }, []);
-  
-    return (
-      <>
-        <Head>
-          <title>Pete's Forecast</title> {/* Set your page title here */}
-        </Head>
-        <div className={styles.mapwrap}>
-          <div ref={mapContainerRef} className={styles.map}/>
-          <div className={`${styles.title} maplibregl-style-font`}>Pete's Forecast v0.1</div>
-        </div>
-      </>
-    );
-  }
+
+    map.addControl(new NavigationControl(), 'top-right');
+
+    new Marker({ color: "#FF0000" })
+      .setLngLat([18, -35])
+      .addTo(map);
+
+    return () => {
+      map.remove();
+    };
+  }, []);
+
+  return (
+    <>
+      <Head>
+        <title>Pete&apos;s Forecast</title>
+      </Head>
+      <div className={styles.mapwrap}>
+        <div ref={mapContainerRef} className={styles.map} />
+        <div className={styles.title}>Pete&apos;s Forecast v0.1</div>
+      </div>
+    </>
+  );
+};
+
+export default Map;
