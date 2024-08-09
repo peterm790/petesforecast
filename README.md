@@ -6,6 +6,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 ## Getting Started
 
 ```bash
+rm -rf node_modules package-lock.json
 npm install .
 npm run dev
 ```

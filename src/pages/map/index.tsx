@@ -74,6 +74,7 @@ export default function Map() {
         </Head>
         <div className={styles.mapwrap}>
           <div ref={mapContainerRef} className={styles.map}/>
+          <div className={`${styles.title} maplibregl-style-font`}>Pete's Forecast v0.1</div>
         </div>
       </>
     );
