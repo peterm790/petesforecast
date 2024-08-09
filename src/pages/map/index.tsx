@@ -2,8 +2,10 @@ import React, { useEffect, useRef } from 'react';
 import Head from 'next/head';
 import maplibregl, { Map as MaplibreMap, NavigationControl, Marker } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+
 import styles from './styles.module.css';
-import baseMapStyle from './baseMapStyle.json';
+
+import baseMapStyle from './basemapstyle.json';
 import { Protocol } from 'pmtiles';
 
 const Map: React.FC = () => {
