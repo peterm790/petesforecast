@@ -8,6 +8,8 @@ import styles from './styles.module.css';
 import baseMapStyle from './basemapstyle.json';
 import { Protocol } from 'pmtiles';
 
+import { Analytics } from "@vercel/analytics/react"
+
 const Map: React.FC = () => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -74,6 +76,7 @@ const Map: React.FC = () => {
         <div ref={mapContainerRef} className={styles.map} />
         <div className={styles.title}>Pete&apos;s Forecast v0.1</div>
       </div>
+      <Analytics />
     </>
   );
 };
