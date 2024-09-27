@@ -1,0 +1,11 @@
+{
+  "source": "http://nomads.ncep.noaa.gov",
+  "width": 1440,
+  "height": 720,
+  "cMin": 0,
+  "cMax": 80,
+  "pMin": 0,
+  "pMax": 123.875,
+  "sMin": -50,
+  "sMax": 100
+}

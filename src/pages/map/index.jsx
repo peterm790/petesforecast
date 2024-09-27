@@ -8,9 +8,11 @@ import { Protocol } from 'pmtiles';
 
 import { addXYZTileLayer } from '../../layers/rasterLayer';
 import { addTriangleLayer } from '../../layers/triangleLayer';
+import WindLayer from "../../layers/streamlines/WindLayer";
 
 import baseMapStyle from './basemapstyle.json';
 import styles from './styles.module.css';
+
 
 const Map = () => {
   console.log("Map component rendered");
@@ -43,12 +45,17 @@ const Map = () => {
       mapRef.current.on('load', () => {
         console.log("Map loaded");
         addTriangleLayer(mapRef.current);
-        addXYZTileLayer(mapRef.current, 'https://t9iixc9z74.execute-api.af-south-1.amazonaws.com/cog/tilejson.json?url=https://peterm790.s3.af-south-1.amazonaws.com/t2m_GFS.tif');
+        // addXYZTileLayer(mapRef.current, 'https://t9iixc9z74.execute-api.af-south-1.amazonaws.com/cog/tilejson.json?url=https://peterm790.s3.af-south-1.amazonaws.com/t2m_GFS.tif'); //
+        // Initialize the WindLayer 
+        const windLayer = new WindLayer(mapRef.current);
+        window.layer = windLayer; // Expose the layer to the window object if needed
+        windLayer.addTo(mapRef.current); 
         setMapInitialized(true);
       });
 
       mapRef.current.addControl(new maplibregl.NavigationControl(), 'top-right');
     };
+
 
     // Default coordinates for South Africa
     const defaultCenter = [22.9375, -30.5595];
