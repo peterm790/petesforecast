@@ -1,8 +1,8 @@
-import AbstractCustomLayer from "./abstractCustomLayer";
+import abstractCustomLayer from "./abstractCustomLayer";
 import WindGlLayer from "./windGlLayer";
 import { ShaderType } from "./util/util";
 
-export default class WindLayer extends AbstractCustomLayer {
+export default class windLayer extends abstractCustomLayer {
   shaders: Promise<string[]>;
   visibleCheckbox: boolean;
   resolutionSelect: string;

@@ -1,6 +1,6 @@
 import ExtProgram from "./util/ExtProgram";
 
-export default abstract class AbstractGlLayer {
+export default abstract class abstractGlLayer {
   map: maplibregl.Map;
   gl: WebGLRenderingContext;
   shaders: string[];

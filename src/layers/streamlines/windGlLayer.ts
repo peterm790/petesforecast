@@ -1,5 +1,5 @@
 import maplibregl from "maplibre-gl"; 
-import AbstractGlLayer from "./abstractGlLayer";
+import abstractGlLayer from "./abstractGlLayer";
 import ExtProgram from "./util/ExtProgram";
 
 
@@ -12,7 +12,7 @@ type WindInfo = {
   vMax: number;
 };
 
-export default class GlLayer extends AbstractGlLayer {
+export default class GlLayer extends abstractGlLayer {
   fadeOpacity = 0.95; // how fast the particle trails fade on each frame
   speedFactor = 0.4; // how fast the particles move
   dropRate = 0.003; // how often the particles move to a random place

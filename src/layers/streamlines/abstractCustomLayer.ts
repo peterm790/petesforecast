@@ -1,7 +1,7 @@
 import { fetch, ShaderType } from "./util/util";
-import AbstractGlLayer from "./abstractGlLayer";
+import abstractGlLayer from "./abstractGlLayer";
 
-export default abstract class AbstractCustomLayer
+export default abstract class abstractCustomLayer
   implements maplibregl.CustomLayerInterface
 {
   id: string;
@@ -10,7 +10,7 @@ export default abstract class AbstractCustomLayer
   visible = true;
   handler: (() => void)[] = [];
 
-  layer?: AbstractGlLayer;
+  layer?: abstractGlLayer;
 
   abstract onAdd(map: maplibregl.Map, gl: WebGLRenderingContext): void;
 
