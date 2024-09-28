@@ -8,7 +8,7 @@ import { Protocol } from 'pmtiles';
 
 import { addXYZTileLayer } from '../../layers/rasterLayer';
 import { addTriangleLayer } from '../../layers/triangleLayer';
-import WindLayer from "../../layers/streamlines/WindLayer";
+import WindLayer from "../../layers/streamlines/WindLayer.ts";
 
 import baseMapStyle from './basemapstyle.json';
 import styles from './styles.module.css';
