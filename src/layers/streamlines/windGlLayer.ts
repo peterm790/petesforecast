@@ -17,7 +17,7 @@ export default class GlLayer extends AbstractGlLayer {
   speedFactor = 0.4; // how fast the particles move
   dropRate = 0.003; // how often the particles move to a random place
   dropRateBump = 0.01; // drop rate increase relative to individual particle speed
-  numParticles = 2 ** 14;
+  numParticles = 0.0001; // A reasonable default value
   particleStateResolution = 0;
 
   isZoom = false;
@@ -67,6 +67,7 @@ export default class GlLayer extends AbstractGlLayer {
   }
 
   clear(): void {
+    console.log('clear', this.numParticles);
     this.setNumParticles(this.numParticles);
     const width = this.gl.canvas.width;
     const height = this.gl.canvas.height;
@@ -316,13 +317,28 @@ export default class GlLayer extends AbstractGlLayer {
 
     const { jsonData, imgData } = data as {
       jsonData: any;
-      imgData: string;
+      imgData: string; // should be Uint8Array | HTMLImageElement;
     };
+
+    console.log('here');
+    console.log(typeof imgData);
+    // console.log(imgData);
+
+    // Convert base64 string to Uint8Array
+    const binaryString = atob(imgData);
+    const len = binaryString.length;
+    const imgDataArray = new Uint8Array(len);
+
+    for (let i = 0; i < len; i++) {
+      imgDataArray[i] = binaryString.charCodeAt(i);
+    } 
+
+    console.log(imgDataArray);
 
     this.windData = rotate(this.windData, jsonData);
     this.windTexture = rotate(
         this.windTexture,
-        this.createTexture(this.gl.LINEAR, imgData) // Convert base64 back to buffer
+        this.createTexture(this.gl.LINEAR, imgDataArray) // Convert base64 back to buffer
     );
     this.windMix = 1;
 
@@ -337,12 +353,20 @@ export default class GlLayer extends AbstractGlLayer {
 }
 
   setNumParticles(numParticles: number): void {
+    console.log('NumParticles', numParticles);
+
+    numParticles = 100000;
+
+    console.log('NumParticles', numParticles);
+    
     const gl = this.gl;
     // we create a square texture where each pixel will hold a particle position encoded as RGBA
     const particleRes = (this.particleStateResolution = Math.ceil(
       Math.sqrt(numParticles)
     ));
     this.numParticles = particleRes * particleRes;
+
+    console.log('NumParticles', this.numParticles);
 
     const particleState = new Uint8Array(this.numParticles * 4);
     for (let i = 0; i < particleState.length; i++) {

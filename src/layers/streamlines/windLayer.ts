@@ -5,7 +5,6 @@ import { ShaderType } from "./util/util";
 export default class WindLayer extends AbstractCustomLayer {
   shaders: Promise<string[]>;
   visibleCheckbox: boolean;
-  numParticlesInput: number;
   resolutionSelect: string;
   forecastSelect: string;
   playButton: boolean;
@@ -22,7 +21,6 @@ export default class WindLayer extends AbstractCustomLayer {
     ]);
 
     this.visibleCheckbox = true;
-    this.numParticlesInput = 14;
     this.resolutionSelect = 'HIGH'; 
     this.forecastSelect = '20240909_00';
     this.playButton = true;
@@ -39,7 +37,7 @@ export default class WindLayer extends AbstractCustomLayer {
 
     // Set the number of particles
     this.layer = layer; // Store the layer instance
-    layer.setNumParticles(2 ** 140); 
+    layer.setNumParticles(1000); 
 
   }
 }
