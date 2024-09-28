@@ -27,9 +27,12 @@ export default async function handler(
     const imgBase64 = imgData.toString('base64');
 
     // Return the JSON data along with the base64 image
-    res.status(200).json({ "jsonData": jsonData, "imgData": imgBase64 });
+    res.status(200).json({ jsonData, imgData: imgBase64 });
   } catch (error) {
-    console.error('Error loading data:', error.message); // Log the error message
-    res.status(500).json({ error: 'Failed to load data', details: error.message });
+    console.error('Error loading data:', error instanceof Error ? error.message : String(error));
+    res.status(500).json({ 
+      error: 'Failed to load data', 
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 }
