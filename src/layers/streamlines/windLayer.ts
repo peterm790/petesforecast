@@ -27,6 +27,7 @@ export default class windLayer extends abstractCustomLayer {
   }
 
   async onAdd(map: maplibregl.Map, gl: WebGLRenderingContext): Promise<void> {
+    console.log("Adding wind layer");
     const shaders = await this.shaders;
     const layer = new WindGlLayer(shaders, map, gl);
 

@@ -46,11 +46,20 @@ const Map = () => {
         console.log("Map loaded");
         addTriangleLayer(mapRef.current);
         // addXYZTileLayer(mapRef.current, 'https://t9iixc9z74.execute-api.af-south-1.amazonaws.com/cog/tilejson.json?url=https://peterm790.s3.af-south-1.amazonaws.com/t2m_GFS.tif'); //
-        // Initialize the WindLayer 
-        const windLayer = new WindLayer(mapRef.current);
-        window.layer = windLayer; // Expose the layer to the window object if needed
-        windLayer.addTo(mapRef.current); 
-        setMapInitialized(true);
+        // Initialize the windLayer 
+        console.log("Adding wind layer");
+        try {
+          const windLayerInstance = new windLayer(mapRef.current);
+          console.log("Wind layer created successfully");
+          console.log("Exposing wind layer to window");
+          window.layer = windLayerInstance; // Expose the layer to the window object if needed
+          console.log("Adding wind layer to map");
+          windLayerInstance.addTo(mapRef.current); 
+          console.log("Wind layer added");
+          setMapInitialized(true);
+        } catch (error) {
+          console.error("Error adding wind layer:", error);
+        }
       });
 
       mapRef.current.addControl(new maplibregl.NavigationControl(), 'top-right');

@@ -17,8 +17,8 @@ export default class GlLayer extends abstractGlLayer {
   speedFactor = 0.4; // how fast the particles move
   dropRate = 0.003; // how often the particles move to a random place
   dropRateBump = 0.01; // drop rate increase relative to individual particle speed
-  numParticles = 0.0001; // A reasonable default value
-  particleStateResolution = 0;
+  numParticles = 100000; // A reasonable default value
+  particleStateResolution = 100;
 
   isZoom = false;
 
@@ -59,6 +59,7 @@ export default class GlLayer extends abstractGlLayer {
     );
     this.framebuffer = gl.createFramebuffer();
 
+    console.log("WindGlLayer skipping color ramp");
     //const colorRamp = await loadImage("/data/colorramp.png");
     //if (colorRamp) {
     //  this.colorRampTexture = this.createTexture(gl.LINEAR, colorRamp);
