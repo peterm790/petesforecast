@@ -12,13 +12,48 @@ type WindInfo = {
   vMax: number;
 };
 
+const defaultRampColors: { [key: number]: string } = {
+  0.0: '#3288bd',
+  0.1: '#66c2a5',
+  0.2: '#abdda4',
+  0.3: '#e6f598',
+  0.4: '#fee08b',
+  0.5: '#fdae61',
+  0.6: '#f46d43',
+  1.0: '#d53e4f'
+};
+
+function getColorRamp(colors: { [key: number]: string }): Uint8Array {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  if (!ctx) {
+    throw new Error('Failed to get 2D context');
+  }
+
+  canvas.width = 256;
+  canvas.height = 1;
+
+  const gradient = ctx.createLinearGradient(0, 0, 256, 0);
+  for (const stop in colors) {
+    if (colors.hasOwnProperty(stop)) {
+      gradient.addColorStop(parseFloat(stop), colors[stop]);
+    }
+  }
+
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, 256, 1);
+
+  return new Uint8Array(ctx.getImageData(0, 0, 256, 1).data);
+}
+
 export default class GlLayer extends abstractGlLayer {
   fadeOpacity = 0.95; // how fast the particle trails fade on each frame
   speedFactor = 0.4; // how fast the particles move
   dropRate = 0.003; // how often the particles move to a random place
   dropRateBump = 0.01; // drop rate increase relative to individual particle speed
   numParticles = 100000; // A reasonable default value
-  particleStateResolution = 100;
+  particleStateResolution = 10;
 
   isZoom = false;
 
@@ -59,11 +94,11 @@ export default class GlLayer extends abstractGlLayer {
     );
     this.framebuffer = gl.createFramebuffer();
 
-    console.log("WindGlLayer skipping color ramp");
-    //const colorRamp = await loadImage("/data/colorramp.png");
-    //if (colorRamp) {
-    //  this.colorRampTexture = this.createTexture(gl.LINEAR, colorRamp);
-    //}
+    console.log("setting default color ramp");
+    console.log(getColorRamp(defaultRampColors));
+
+    this.colorRampTexture = this.createTexture(gl.LINEAR, getColorRamp(defaultRampColors));
+
     this.clear();
   }
 
@@ -88,6 +123,7 @@ export default class GlLayer extends abstractGlLayer {
   }
 
   prerender(matrix: number[]): void {
+    console.log("prerender");
     if (!this.windData.length || this.isZoom) {
       return;
     }
@@ -163,6 +199,8 @@ export default class GlLayer extends abstractGlLayer {
 
   private drawParticles(matrix: number[]): void {
     const gl = this.gl;
+    console.log("drawParticles");
+    console.log(this.windData[0].uMax);
 
     if (this.drawProgram && this.windData.length) {
       const prog = this.drawProgram;
@@ -210,6 +248,8 @@ export default class GlLayer extends abstractGlLayer {
         );
       }
 
+      console.log("drawing particles FINALLY");
+      console.log(this.numParticles);
       gl.drawArrays(gl.POINTS, 0, this.numParticles);
     }
   }
@@ -339,7 +379,7 @@ export default class GlLayer extends abstractGlLayer {
     this.windData = rotate(this.windData, jsonData);
     this.windTexture = rotate(
         this.windTexture,
-        this.createTexture(this.gl.LINEAR, imgDataArray) // Convert base64 back to buffer
+        this.createTexture(this.gl.LINEAR, imgDataArray)
     );
     this.windMix = 1;
 
