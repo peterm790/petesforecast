@@ -344,6 +344,9 @@ export default class WindGlLayer extends abstractGlLayer {
     const response = await fetch(`/api/loadWindData${args}`);
     const data = await response.json();
 
+    console.log(data[1]);
+    console.log(typeof data[1]);
+
     const { jsonData, imgData } = data as {
       jsonData: any;
       imgData: string; // should be Uint8Array | HTMLImageElement;
@@ -360,11 +363,14 @@ export default class WindGlLayer extends abstractGlLayer {
 
     console.log(jsonData);
     console.log(imgDataArray);
-    
-    this.windData = rotate(this.windData, jsonData);
-    const img = new Image();
-    img.src = `data:image/png;base64,${imgData}`;
-    await new Promise(resolve => img.onload = resolve);
+
+    console.log('windData 1', this.windData);
+    this.windData = rotate(this.windData, JSON.parse(jsonData));
+    console.log('windData 2', this.windData);
+
+    //console.log('imgData', imgData);
+    const img = await loadBase64Image(imgData);
+    //console.log('img', img);
 
     this.windTexture = rotate(
       this.windTexture,
@@ -412,4 +418,17 @@ export default class WindGlLayer extends abstractGlLayer {
     }
     this.particleIndexBuffer = this.createBuffer(particleIndices);
   }
+}
+
+export function loadBase64Image(base64String: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    if (typeof window === 'undefined') {
+      reject(new Error('Cannot load image on server-side'));
+    } else {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = `data:image/png;base64,${base64String}`;
+    }
+  });
 }

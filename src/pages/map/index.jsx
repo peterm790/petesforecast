@@ -6,8 +6,8 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { Protocol } from 'pmtiles';
 
-//import { addXYZTileLayer } from '../../layers/rasterLayer';
-//import { addTriangleLayer } from '../../layers/triangleLayer';
+import { addXYZTileLayer } from '../../layers/rasterLayer';
+import { addTriangleLayer } from '../../layers/triangleLayer';
 import windLayer from "../../layers/streamlines/windLayer";
 
 import baseMapStyle from './basemapstyle.json';
@@ -44,9 +44,8 @@ const Map = () => {
 
       mapRef.current.on('load', () => {
         console.log("Map loaded");
-        //addTriangleLayer(mapRef.current);
-        // addXYZTileLayer(mapRef.current, 'https://t9iixc9z74.execute-api.af-south-1.amazonaws.com/cog/tilejson.json?url=https://peterm790.s3.af-south-1.amazonaws.com/t2m_GFS.tif'); //
-        // Initialize the windLayer 
+        addTriangleLayer(mapRef.current);
+        addXYZTileLayer(mapRef.current, 'https://t9iixc9z74.execute-api.af-south-1.amazonaws.com/cog/tilejson.json?url=https://peterm790.s3.af-south-1.amazonaws.com/t2m_GFS.tif');
         console.log("Adding wind layer");
         try {
           const windLayerInstance = new windLayer(mapRef.current);
