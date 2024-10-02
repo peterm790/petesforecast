@@ -6,8 +6,8 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { Protocol } from 'pmtiles';
 
-import { addXYZTileLayer } from '../../layers/rasterLayer';
-import { addTriangleLayer } from '../../layers/triangleLayer';
+//import { addXYZTileLayer } from '../../layers/rasterLayer';
+//import { addTriangleLayer } from '../../layers/triangleLayer';
 import windLayer from "../../layers/streamlines/windLayer";
 
 import baseMapStyle from './basemapstyle.json';
@@ -44,18 +44,18 @@ const Map = () => {
 
       mapRef.current.on('load', () => {
         console.log("Map loaded");
-        addTriangleLayer(mapRef.current);
+        //addTriangleLayer(mapRef.current);
         // addXYZTileLayer(mapRef.current, 'https://t9iixc9z74.execute-api.af-south-1.amazonaws.com/cog/tilejson.json?url=https://peterm790.s3.af-south-1.amazonaws.com/t2m_GFS.tif'); //
         // Initialize the windLayer 
         console.log("Adding wind layer");
         try {
           const windLayerInstance = new windLayer(mapRef.current);
-          console.log("Wind layer created successfully");
-          console.log("Exposing wind layer to window");
-          window.layer = windLayerInstance; // Expose the layer to the window object if needed
-          console.log("Adding wind layer to map");
-          windLayerInstance.addTo(mapRef.current); 
-          console.log("Wind layer added");
+          console.log(typeof windLayerInstance);
+          mapRef.current.addLayer(windLayerInstance);
+
+          // Move the wind layer to the top
+          mapRef.current.moveLayer(windLayerInstance.id);
+
           setMapInitialized(true);
         } catch (error) {
           console.error("Error adding wind layer:", error);

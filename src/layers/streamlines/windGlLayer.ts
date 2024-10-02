@@ -1,6 +1,7 @@
 import maplibregl from "maplibre-gl"; 
 import abstractGlLayer from "./abstractGlLayer";
 import ExtProgram from "./util/ExtProgram";
+// import { fetch, loadImage } from "./util/util";
 
 
 type WindInfo = {
@@ -47,13 +48,13 @@ function getColorRamp(colors: { [key: number]: string }): Uint8Array {
   return new Uint8Array(ctx.getImageData(0, 0, 256, 1).data);
 }
 
-export default class GlLayer extends abstractGlLayer {
-  fadeOpacity = 0.95; // how fast the particle trails fade on each frame
-  speedFactor = 0.4; // how fast the particles move
-  dropRate = 0.003; // how often the particles move to a random place
-  dropRateBump = 0.01; // drop rate increase relative to individual particle speed
-  numParticles = 100000; // A reasonable default value
-  particleStateResolution = 10;
+export default class WindGlLayer extends abstractGlLayer {
+  fadeOpacity = 0.95;
+  speedFactor = 0.4;
+  dropRate = 0.003;
+  dropRateBump = 0.01;
+  numParticles = 2 ** 14;
+  particleStateResolution = 0;
 
   isZoom = false;
 
@@ -94,16 +95,12 @@ export default class GlLayer extends abstractGlLayer {
     );
     this.framebuffer = gl.createFramebuffer();
 
-    console.log("setting default color ramp");
-    console.log(getColorRamp(defaultRampColors));
-
     this.colorRampTexture = this.createTexture(gl.LINEAR, getColorRamp(defaultRampColors));
 
     this.clear();
   }
 
   clear(): void {
-    console.log('clear', this.numParticles);
     this.setNumParticles(this.numParticles);
     const width = this.gl.canvas.width;
     const height = this.gl.canvas.height;
@@ -123,7 +120,6 @@ export default class GlLayer extends abstractGlLayer {
   }
 
   prerender(matrix: number[]): void {
-    console.log("prerender");
     if (!this.windData.length || this.isZoom) {
       return;
     }
@@ -199,9 +195,6 @@ export default class GlLayer extends abstractGlLayer {
 
   private drawParticles(matrix: number[]): void {
     const gl = this.gl;
-    console.log("drawParticles");
-    console.log(this.windData[0].uMax);
-
     if (this.drawProgram && this.windData.length) {
       const prog = this.drawProgram;
       gl.useProgram(prog.getProgram());
@@ -248,8 +241,6 @@ export default class GlLayer extends abstractGlLayer {
         );
       }
 
-      console.log("drawing particles FINALLY");
-      console.log(this.numParticles);
       gl.drawArrays(gl.POINTS, 0, this.numParticles);
     }
   }
@@ -278,7 +269,6 @@ export default class GlLayer extends abstractGlLayer {
       this.bindAttribute(this.quadBuffer, aPos, 2);
     }
 
-    // Textures
     gl.uniform1i(prog.getUniform("u_wind"), 0);
     gl.uniform1i(prog.getUniform("u_particles"), 1);
     gl.uniform1i(prog.getUniform("u_previous"), 3);
@@ -341,14 +331,12 @@ export default class GlLayer extends abstractGlLayer {
 
     gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-    // swap the particle state textures so the new one becomes the current one
     const temp = this.particleStateTexture0;
     this.particleStateTexture0 = this.particleStateTexture1;
     this.particleStateTexture1 = temp;
   }
 
-  async loadWindData(forecast?: string, resolution = "low"): Promise<void> {
-
+  async loadWindData(forecast?: string, resolution = "high"): Promise<void> {
     const args = `?resolution=${resolution}&forecast=${forecast ?? ""}`;
 
     console.log(`/api/loadWindData${args}`);
@@ -361,10 +349,6 @@ export default class GlLayer extends abstractGlLayer {
       imgData: string; // should be Uint8Array | HTMLImageElement;
     };
 
-    console.log('here');
-    console.log(typeof imgData);
-    // console.log(imgData);
-
     // Convert base64 string to Uint8Array
     const binaryString = atob(imgData);
     const len = binaryString.length;
@@ -374,46 +358,41 @@ export default class GlLayer extends abstractGlLayer {
       imgDataArray[i] = binaryString.charCodeAt(i);
     } 
 
+    console.log(jsonData);
     console.log(imgDataArray);
-
+    
     this.windData = rotate(this.windData, jsonData);
+    const img = new Image();
+    img.src = `data:image/png;base64,${imgData}`;
+    await new Promise(resolve => img.onload = resolve);
+
     this.windTexture = rotate(
-        this.windTexture,
-        this.createTexture(this.gl.LINEAR, imgDataArray)
+      this.windTexture,
+      this.createTexture(this.gl.LINEAR, img)
     );
     this.windMix = 1;
 
     function rotate<T>(arr: T[], data: T): T[] {
-        if (!arr.length) {
-            return [data, data];
-        } else {
-            arr.unshift(data);
-            return arr.slice(0, 2);
-        }
+      if (!arr.length) {
+        return [data, data];
+      } else {
+        arr.unshift(data);
+        return arr.slice(0, 2);
+      }
     }
-}
+  }
 
   setNumParticles(numParticles: number): void {
-    console.log('NumParticles', numParticles);
-
-    numParticles = 100000;
-
-    console.log('NumParticles', numParticles);
-    
     const gl = this.gl;
-    // we create a square texture where each pixel will hold a particle position encoded as RGBA
     const particleRes = (this.particleStateResolution = Math.ceil(
       Math.sqrt(numParticles)
     ));
     this.numParticles = particleRes * particleRes;
 
-    console.log('NumParticles', this.numParticles);
-
     const particleState = new Uint8Array(this.numParticles * 4);
     for (let i = 0; i < particleState.length; i++) {
-      particleState[i] = Math.floor(Math.random() * 256); // randomize the initial particle positions
+      particleState[i] = Math.floor(Math.random() * 256);
     }
-    // textures to hold the particle state for the current and the next frame
     this.particleStateTexture0 = this.createTexture(
       gl.NEAREST,
       particleState,

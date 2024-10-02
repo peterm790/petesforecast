@@ -2,16 +2,14 @@ import abstractCustomLayer from "./abstractCustomLayer";
 import WindGlLayer from "./windGlLayer";
 import { ShaderType } from "./util/util";
 
-export default class windLayer extends abstractCustomLayer {
+export default class WindLayer extends abstractCustomLayer {
   shaders: Promise<string[]>;
-  visibleCheckbox: boolean;
-  resolutionSelect: string;
-  forecastSelect: string;
-  playButton: boolean;
-  playInterval?: any;
+  private numParticles: number = 2 ** 14; // Kept your original setting
+  private forecastIndex: number = 0;
 
   constructor(map?: maplibregl.Map) {
     super("wind", map);
+    this.visible = true; // Set visible to true by default
     this.shaders = Promise.all([
       this.loadShaderSource(ShaderType.VERTEX, "draw"),
       this.loadShaderSource(ShaderType.VERTEX, "quad"),
@@ -19,26 +17,64 @@ export default class windLayer extends abstractCustomLayer {
       this.loadShaderSource(ShaderType.FRAGMENT, "screen"),
       this.loadShaderSource(ShaderType.FRAGMENT, "update"),
     ]);
-
-    this.visibleCheckbox = true;
-    this.resolutionSelect = 'HIGH'; 
-    this.forecastSelect = '20240909_00';
-    this.playButton = true;
   }
 
   async onAdd(map: maplibregl.Map, gl: WebGLRenderingContext): Promise<void> {
     console.log("Adding wind layer");
     const shaders = await this.shaders;
     const layer = new WindGlLayer(shaders, map, gl);
+    this.layer = layer;
 
-    // Load wind data immediately with static values
-    const forecast = '20240909_00'; // Static forecast value
-    const resolution = 'HIGH'; // Static resolution value
-    await layer.loadWindData(forecast, resolution); // Load the wind data
+    this.setNumParticles();
+    this.addListener(map, ["zoomstart", "mousedown"], () => {
+      if (this.visible) this.toggle();
+    });
+    this.addListener(map, ["zoomend", "mouseup"], () => {
+      if (!this.visible) this.toggle();
+    });
 
-    // Set the number of particles
-    this.layer = layer; // Store the layer instance
-    layer.setNumParticles(1000); 
+    const f = (): void => {
+      if (this.visible) {
+        this.toggle();
+        setTimeout(this.toggle.bind(this), 200);
+      }
+    };
+    document.addEventListener("fullscreenchange", f);
+    this.handler.push(() =>
+      document.removeEventListener("fullscreenchange", f)
+    );
 
+    await this.loadForecast();
+  }
+
+  toggle(): void {
+    super.toggle();
+    if (this.layer) {
+      const layer = this.layer as WindGlLayer;
+      layer.clear();
+      layer.map.triggerRepaint();
+    }
+  }
+
+  private async loadForecast(): Promise<void> {
+    if (this.layer) {
+      const layer = this.layer as WindGlLayer;
+      await layer.loadWindData(this.forecastIndex.toString(), "HIGH"); // Kept "HIGH" as in your original code
+    }
+  }
+
+  private setNumParticles(): void {
+    if (this.layer) {
+      const layer = this.layer as WindGlLayer;
+      layer.setNumParticles(this.numParticles);
+    }
+  }
+
+  onRemove(): void {
+    super.onRemove();
+    if (this.layer) {
+      const layer = this.layer as WindGlLayer;
+      layer.clear();
+    }
   }
 }

@@ -23,7 +23,6 @@ export default abstract class abstractCustomLayer
   }
 
   addTo(map: maplibregl.Map): void {
-    console.log("Adding layer to map");
     map.on("load", () => map.addLayer(this));
   }
 

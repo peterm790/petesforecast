@@ -58,7 +58,6 @@ export default abstract class abstractGlLayer {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter);
 
     if (width && height && data instanceof Uint8Array) {
-      console.log("setting texture uint8Array");
       gl.texImage2D(
         gl.TEXTURE_2D,
         0,
@@ -71,11 +70,9 @@ export default abstract class abstractGlLayer {
         data
       );
     } else if (data instanceof HTMLImageElement) {
-      console.log("setting texture HTMLImageElement");
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, data);
     }
     gl.bindTexture(gl.TEXTURE_2D, null);
-    console.log(texture);
     return texture;
   }
 
