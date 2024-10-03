@@ -7,7 +7,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { Protocol } from 'pmtiles';
 
 import { addXYZTileLayer } from '../../layers/rasterLayer';
-import { addTriangleLayer } from '../../layers/triangleLayer';
+//import { addTriangleLayer } from '../../layers/triangleLayer';
 import windLayer from "../../layers/streamlines/windLayer";
 
 import baseMapStyle from './basemapstyle.json';
@@ -39,13 +39,15 @@ const Map = () => {
         container: mapContainerRef.current,
         style: baseMapStyle,
         center: center,
-        zoom: 5
+        zoom: 2,
+        minZoom: 2,
+        maxZoom: 5
       });
 
       mapRef.current.on('load', () => {
         console.log("Map loaded");
-        addTriangleLayer(mapRef.current);
-        addXYZTileLayer(mapRef.current, 'https://t9iixc9z74.execute-api.af-south-1.amazonaws.com/cog/tilejson.json?url=https://peterm790.s3.af-south-1.amazonaws.com/t2m_GFS.tif');
+        //addTriangleLayer(mapRef.current);
+        addXYZTileLayer(mapRef.current, 'https://t9iixc9z74.execute-api.af-south-1.amazonaws.com/cog/tilejson.json?url=https://peterm790.s3.af-south-1.amazonaws.com/test3.tif');
         console.log("Adding wind layer");
         try {
           const windLayerInstance = new windLayer(mapRef.current);
@@ -93,8 +95,27 @@ const Map = () => {
         <title>Pete&apos;s Forecast</title>
       </Head>
       <div className={styles.mapwrap}>
+
         <div ref={mapContainerRef} className={styles.map} />
-        <div className={styles.title}>Pete&apos;s Forecast v0.1</div>
+        <div className={styles.title}>
+          <span className={styles.valueText}>Pete&apos;s Forecast v0.1</span>
+        </div>
+
+        <div className={styles.menuBar}>
+          <p className={styles.dateTime}>
+            <span className={styles.labelText}>Forecast Model:</span>{' '}
+            <span className={styles.valueText}>GFS</span>
+          </p>
+          <p className={styles.dateTime}>
+            <span className={styles.labelText}>Valid Time:</span>{' '}
+            <span className={styles.valueText}>03/10/2024 19:00</span>
+          </p>
+          <p className={styles.dateTime}>
+            <span className={styles.labelText}>Layer:</span>{' '}
+            <span className={styles.valueText}>Wind Speed</span>
+          </p>
+        </div>
+
       </div>
       <Analytics />
     </>
