@@ -25,7 +25,7 @@ export default class WindLayer extends abstractCustomLayer {
     const layer = new WindGlLayer(shaders, map, gl);
     this.layer = layer;
 
-    this.setNumParticles(this.numParticles);
+    this.setNumParticles();
     this.addListener(map, ["zoomstart", "mousedown"], () => {
       if (this.visible) this.toggle();
     });
