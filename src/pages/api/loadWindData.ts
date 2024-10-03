@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import path from 'path';
 import { promises as fs } from 'fs';
 
 type ResponseData = {
@@ -14,9 +15,9 @@ export default async function handler(
 ) {
   const { forecast = '', resolution = '' } = req.query;
 
-  // Define file paths
-  const jsonFilePath = './public/data/wind_20240908_06_1p00_1.json'; 
-  const imgFilePath = './public/data/wind_20240908_06_1p00_1.png'; 
+  // Define file paths using path.join and process.cwd()
+  const jsonFilePath = path.join(process.cwd(), 'public', 'data', 'wind_20240909_00_0p25_6.json');
+  const imgFilePath = path.join(process.cwd(), 'public', 'data', 'wind_20240909_00_0p25_6.png');
 
   try {
     // Read the JSON file

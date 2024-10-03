@@ -14,14 +14,12 @@ type WindInfo = {
 };
 
 const defaultRampColors: { [key: number]: string } = {
-  0.0: '#3288bd',
-  0.1: '#66c2a5',
-  0.2: '#abdda4',
-  0.3: '#e6f598',
-  0.4: '#fee08b',
-  0.5: '#fdae61',
-  0.6: '#f46d43',
-  1.0: '#d53e4f'
+  0.0: '#ffffff', // White
+  0.2: '#e6f0ff', // Very light blue
+  0.4: '#b3d1ff', // Light blue
+  0.6: '#80b3ff', // Medium blue
+  0.8: '#4d94ff', // Blue
+  1.0: '#2c3e50'  // Dark blue-grey
 };
 
 function getColorRamp(colors: { [key: number]: string }): Uint8Array {
@@ -49,9 +47,9 @@ function getColorRamp(colors: { [key: number]: string }): Uint8Array {
 }
 
 export default class WindGlLayer extends abstractGlLayer {
-  fadeOpacity = 0.95;
-  speedFactor = 0.4;
-  dropRate = 0.003;
+  fadeOpacity = 0.9;
+  speedFactor = 0.2;
+  dropRate = 0.01;
   dropRateBump = 0.01;
   numParticles = 2 ** 14;
   particleStateResolution = 0;
@@ -351,6 +349,10 @@ export default class WindGlLayer extends abstractGlLayer {
       jsonData: any;
       imgData: string; // should be Uint8Array | HTMLImageElement;
     };
+    
+    if (imgData === undefined) {
+      throw new Error('imgData is undefined');
+    }
 
     // Convert base64 string to Uint8Array
     const binaryString = atob(imgData);
@@ -364,9 +366,9 @@ export default class WindGlLayer extends abstractGlLayer {
     console.log(jsonData);
     console.log(imgDataArray);
 
-    console.log('windData 1', this.windData);
+    //console.log('windData 1', this.windData);
     this.windData = rotate(this.windData, JSON.parse(jsonData));
-    console.log('windData 2', this.windData);
+    //console.log('windData 2', this.windData);
 
     //console.log('imgData', imgData);
     const img = await loadBase64Image(imgData);
