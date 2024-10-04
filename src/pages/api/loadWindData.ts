@@ -1,12 +1,37 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import path from 'path';
-import { promises as fs } from 'fs';
+
+import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+import { Readable } from 'stream';
+
+const s3Client = new S3Client({ region: "af-south-1" });
+
+async function streamToBuffer(stream: Readable): Promise<Buffer> {
+  const chunks = [];
+  for await (const chunk of stream) {
+    chunks.push(chunk);
+  }
+  return Buffer.concat(chunks);
+}
+
+async function fetchFromS3(key: string): Promise<Buffer> {
+  const command = new GetObjectCommand({
+    Bucket: "peterm790",
+    Key: key,
+  });
+
+  const response = await s3Client.send(command);
+  if (response.Body instanceof Readable) {
+    return streamToBuffer(response.Body);
+  } else {
+    throw new Error('Unexpected response body type');
+  }
+}
+
 
 type ResponseData = {
   jsonData?: any;
   imgData?: string;
   error?: string;
-  details?: string;
 };
 
 export default async function handler(
@@ -15,25 +40,23 @@ export default async function handler(
 ) {
   const { forecast = '', resolution = '' } = req.query;
 
-  // Define file paths using path.join and process.cwd()
-  const jsonFilePath = path.join(process.cwd(), 'public', 'data', 'test.json');
-  const imgFilePath = path.join(process.cwd(), 'public', 'data', 'test.png');
-
   try {
-    // Read the JSON file
-    const jsonData = await fs.readFile(jsonFilePath, 'utf-8');
+    const jsonBuffer = await fetchFromS3("test.json");
+    const imgBuffer = await fetchFromS3("test.png");
 
-    // Read the image as a buffer and convert it to a base64 string
-    const imgData = await fs.readFile(imgFilePath);
-    const imgBase64 = imgData.toString('base64');
+    const jsonData = jsonBuffer.toString('utf-8');
+
+    // Process jsonData and imgBuffer as needed
+    // For example, you might want to send the image as base64
+    const imgBase64 = imgBuffer.toString('base64');
 
     // Return the JSON data along with the base64 image
-    res.status(200).json({ jsonData, imgData: imgBase64 });
-  } catch (error) {
-    console.error('Error loading data:', error instanceof Error ? error.message : String(error));
-    res.status(500).json({ 
-      error: 'Failed to load data', 
-      details: error instanceof Error ? error.message : 'Unknown error'
+    res.status(200).json({
+      jsonData: jsonData,
+      imgData: imgBase64
     });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Failed to load data' });
   }
 }

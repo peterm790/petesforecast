@@ -39,15 +39,15 @@ const Map = () => {
         container: mapContainerRef.current,
         style: baseMapStyle,
         center: center,
-        zoom: 2,
-        minZoom: 2,
-        maxZoom: 5
+        zoom: 2
+        //minZoom: 2,
+        //maxZoom: 5
       });
 
       mapRef.current.on('load', () => {
         console.log("Map loaded");
         //addTriangleLayer(mapRef.current);
-        addXYZTileLayer(mapRef.current, 'https://t9iixc9z74.execute-api.af-south-1.amazonaws.com/cog/tilejson.json?url=https://peterm790.s3.af-south-1.amazonaws.com/test3.tif');
+        addXYZTileLayer(mapRef.current, 'https://t9iixc9z74.execute-api.af-south-1.amazonaws.com/cog/tilejson.json?url=https://peterm790.s3.af-south-1.amazonaws.com/test.tif');
         console.log("Adding wind layer");
         try {
           const windLayerInstance = new windLayer(mapRef.current);
@@ -108,7 +108,7 @@ const Map = () => {
           </p>
           <p className={styles.dateTime}>
             <span className={styles.labelText}>Valid Time:</span>{' '}
-            <span className={styles.valueText}>03/10/2024 19:00</span>
+            <span className={styles.valueText}>04/10/2024 19:00</span>
           </p>
           <p className={styles.dateTime}>
             <span className={styles.labelText}>Layer:</span>{' '}

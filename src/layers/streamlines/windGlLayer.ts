@@ -354,6 +354,9 @@ export default class WindGlLayer extends abstractGlLayer {
       throw new Error('imgData is undefined');
     }
 
+    console.log('jsonData', jsonData);
+    console.log('imgDataArray', imgData);
+
     // Convert base64 string to Uint8Array
     const binaryString = atob(imgData);
     const len = binaryString.length;
@@ -363,16 +366,8 @@ export default class WindGlLayer extends abstractGlLayer {
       imgDataArray[i] = binaryString.charCodeAt(i);
     } 
 
-    console.log(jsonData);
-    console.log(imgDataArray);
-
-    //console.log('windData 1', this.windData);
     this.windData = rotate(this.windData, JSON.parse(jsonData));
-    //console.log('windData 2', this.windData);
-
-    //console.log('imgData', imgData);
     const img = await loadBase64Image(imgData);
-    //console.log('img', img);
 
     this.windTexture = rotate(
       this.windTexture,
