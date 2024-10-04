@@ -39,9 +39,9 @@ const Map = () => {
         container: mapContainerRef.current,
         style: baseMapStyle,
         center: center,
-        zoom: 2
-        //minZoom: 2,
-        //maxZoom: 5
+        zoom: 2,
+        minZoom: 2,
+        maxZoom: 10
       });
 
       mapRef.current.on('load', () => {
