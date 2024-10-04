@@ -1,48 +1,31 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-
-import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
-import { Readable } from 'stream';
-
-const s3Client = new S3Client({ 
-  region: "af-south-1",
-  credentials: undefined // This tells the client not to look for credentials
-});
-
-async function streamToBuffer(stream: Readable): Promise<Buffer> {
-  const chunks = [];
-  for await (const chunk of stream) {
-    chunks.push(chunk);
-  }
-  return Buffer.concat(chunks);
-}
-
-async function fetchFromS3(key: string): Promise<Buffer> {
-  const command = new GetObjectCommand({
-    Bucket: "peterm790",
-    Key: key,
-  });
-
-  try {
-    console.log(`Fetching ${key} from S3...`);
-    const response = await s3Client.send(command);
-    if (response.Body instanceof Readable) {
-      const buffer = await streamToBuffer(response.Body);
-      console.log(`Successfully fetched ${key}`);
-      return buffer;
-    } else {
-      throw new Error('Unexpected response body type');
-    }
-  } catch (error) {
-    console.error(`Error fetching ${key} from S3:`, error);
-    throw error;
-  }
-}
+import { IncomingMessage } from 'http';
+import { request } from 'https';
 
 type ResponseData = {
   jsonData?: any;
   imgData?: string;
   error?: string;
 };
+
+async function fetchFromS3ViaHttps(key: string): Promise<Buffer> {
+  const bucketName = "peterm790";
+  const region = "af-south-1";
+  const url = `https://${bucketName}.s3.${region}.amazonaws.com/${key}`;
+
+  return new Promise((resolve, reject) => {
+    request(url, (res: IncomingMessage) => {
+      if (res.statusCode !== 200) {
+        reject(new Error(`Failed to fetch ${key}, status code: ${res.statusCode}`));
+        return;
+      }
+
+      const data: Uint8Array[] = [];
+      res.on('data', (chunk) => data.push(chunk));
+      res.on('end', () => resolve(Buffer.concat(data)));
+    }).on('error', (err) => reject(err)).end();
+  });
+}
 
 export default async function handler(
   req: NextApiRequest,
@@ -51,11 +34,14 @@ export default async function handler(
   const { forecast = '', resolution = '' } = req.query;
 
   try {
-    const jsonBuffer = await fetchFromS3("test.json");
-    const imgBuffer = await fetchFromS3("test.png");
+    const jsonBuffer = await fetchFromS3ViaHttps("test.json");
+    const imgBuffer = await fetchFromS3ViaHttps("test.png");
 
     const jsonData = jsonBuffer.toString('utf-8');
     const imgBase64 = imgBuffer.toString('base64');
+
+    console.log(jsonData);
+    console.log(imgBase64);
 
     res.status(200).json({
       jsonData: jsonData,
