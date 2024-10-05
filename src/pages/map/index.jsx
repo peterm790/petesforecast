@@ -40,8 +40,8 @@ const Map = () => {
         style: baseMapStyle,
         center: center,
         zoom: 2,
-        minZoom: 2,
-        maxZoom: 10
+        minZoom: 1,
+        maxZoom: 7
       });
 
       mapRef.current.on('load', () => {

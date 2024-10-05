@@ -20,6 +20,7 @@ export function addXYZTileLayer(map, url) {
         type: 'raster',
         tiles: tileJSON.tiles,
         tileSize: 256,
+        'bounds': [-180, -90, 180, 90], // Covers entire world
       });
 
       map.addLayer({

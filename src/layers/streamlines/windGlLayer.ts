@@ -1,8 +1,6 @@
 import maplibregl from "maplibre-gl"; 
 import abstractGlLayer from "./abstractGlLayer";
 import ExtProgram from "./util/ExtProgram";
-// import { fetch, loadImage } from "./util/util";
-
 
 type WindInfo = {
   width: number;
@@ -14,12 +12,12 @@ type WindInfo = {
 };
 
 const defaultRampColors: { [key: number]: string } = {
-  0.0: '#ffffff', // White
-  0.2: '#e6f0ff', // Very light blue
-  0.4: '#b3d1ff', // Light blue
-  0.6: '#80b3ff', // Medium blue
-  0.8: '#4d94ff', // Blue
-  1.0: '#2c3e50'  // Dark blue-grey
+  0.0: '#ffffff',
+  0.2: '#ffffff',
+  0.4: '#ffffff',
+  0.6: '#ffffff',
+  0.8: '#ffffff',
+  1.0: '#ffffff'
 };
 
 function getColorRamp(colors: { [key: number]: string }): Uint8Array {
@@ -334,40 +332,44 @@ export default class WindGlLayer extends abstractGlLayer {
     this.particleStateTexture1 = temp;
   }
 
+  private loadBase64Image(base64: string): Promise<HTMLImageElement> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = (e) => reject(e);
+      img.src = base64;
+    });
+  }
+
+  private blobToBase64(blob: Blob): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
+
   async loadWindData(forecast?: string, resolution = "high"): Promise<void> {
-    const args = `?resolution=${resolution}&forecast=${forecast ?? ""}`;
+    const bucketName = "peterm790";
+    const region = "af-south-1";
+    const jsonKey = "test.json"; // Replace with your actual key
+    const imgKey = "test.png";   // Replace with your actual key
 
-    console.log(`/api/loadWindData${args}`);
+    // Construct the public URLs for the JSON and image data
+    const jsonUrl = `https://${bucketName}.s3.${region}.amazonaws.com/${jsonKey}`;
+    const imgUrl = `https://${bucketName}.s3.${region}.amazonaws.com/${imgKey}`;
 
-    const response = await fetch(`/api/loadWindData${args}`);
-    const data = await response.json();
+    // Fetch data directly from S3
+    const jsonResponse = await fetch(jsonUrl);
+    const imgResponse = await fetch(imgUrl);
 
-    console.log(data[1]);
-    console.log(typeof data[1]);
+    const jsonData = await jsonResponse.json();
+    const imgBlob = await imgResponse.blob();
+    const imgBase64 = await this.blobToBase64(imgBlob);
 
-    const { jsonData, imgData } = data as {
-      jsonData: any;
-      imgData: string; // should be Uint8Array | HTMLImageElement;
-    };
-    
-    if (imgData === undefined) {
-      throw new Error('imgData is undefined');
-    }
-
-    console.log('jsonData', jsonData);
-    console.log('imgDataArray', imgData);
-
-    // Convert base64 string to Uint8Array
-    const binaryString = atob(imgData);
-    const len = binaryString.length;
-    const imgDataArray = new Uint8Array(len);
-
-    for (let i = 0; i < len; i++) {
-      imgDataArray[i] = binaryString.charCodeAt(i);
-    } 
-
-    this.windData = rotate(this.windData, JSON.parse(jsonData));
-    const img = await loadBase64Image(imgData);
+    this.windData = rotate(this.windData, jsonData);
+    const img = await this.loadBase64Image(imgBase64);
 
     this.windTexture = rotate(
       this.windTexture,
@@ -415,17 +417,4 @@ export default class WindGlLayer extends abstractGlLayer {
     }
     this.particleIndexBuffer = this.createBuffer(particleIndices);
   }
-}
-
-export function loadBase64Image(base64String: string): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    if (typeof window === 'undefined') {
-      reject(new Error('Cannot load image on server-side'));
-    } else {
-      const img = new Image();
-      img.onload = () => resolve(img);
-      img.onerror = reject;
-      img.src = `data:image/png;base64,${base64String}`;
-    }
-  });
 }
