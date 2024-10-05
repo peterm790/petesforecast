@@ -5,11 +5,12 @@ import { ShaderType } from "./util/util";
 export default class WindLayer extends abstractCustomLayer {
   shaders: Promise<string[]>;
   private numParticles: number = 2 ** 11.5; // Kept your original setting
-  private forecastIndex: number = 0;
+  private dataURL: string;
 
-  constructor(map?: maplibregl.Map) {
+  constructor(map?: maplibregl.Map, dataURL?: string) {
     super("wind", map);
     this.visible = true; // Set visible to true by default
+    this.dataURL = dataURL || '';
     this.shaders = Promise.all([
       this.loadShaderSource(ShaderType.VERTEX, "draw"),
       this.loadShaderSource(ShaderType.VERTEX, "quad"),
@@ -59,7 +60,7 @@ export default class WindLayer extends abstractCustomLayer {
   private async loadForecast(): Promise<void> {
     if (this.layer) {
       const layer = this.layer as WindGlLayer;
-      await layer.loadWindData(this.forecastIndex.toString(), "HIGH"); // Kept "HIGH" as in your original code
+      await layer.loadWindData(this.dataURL); // Kept "HIGH" as in your original code
     }
   }
 

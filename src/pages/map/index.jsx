@@ -13,12 +13,14 @@ import windLayer from "../../layers/streamlines/windLayer";
 import baseMapStyle from './basemapstyle.json';
 import styles from './styles.module.css';
 
+const MAX_STEP = 128;
 
 const Map = () => {
-  console.log("Map component rendered");
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const [mapInitialized, setMapInitialized] = useState(false);
+  const [step, setStep] = useState(0);
+  const [currentDateTime, setCurrentDateTime] = useState('');
 
   useEffect(() => {
     console.log("Setting up Protomaps protocol");
@@ -34,7 +36,6 @@ const Map = () => {
     if (!mapContainerRef.current || mapRef.current || mapInitialized) return;
 
     const initializeMap = (center) => {
-      console.log("Creating map instance");
       mapRef.current = new maplibregl.Map({
         container: mapContainerRef.current,
         style: baseMapStyle,
@@ -45,27 +46,11 @@ const Map = () => {
       });
 
       mapRef.current.on('load', () => {
-        console.log("Map loaded");
-        //addTriangleLayer(mapRef.current);
-        addXYZTileLayer(mapRef.current, 'https://t9iixc9z74.execute-api.af-south-1.amazonaws.com/cog/tilejson.json?url=https://peterm790.s3.af-south-1.amazonaws.com/test.tif');
-        console.log("Adding wind layer");
-        try {
-          const windLayerInstance = new windLayer(mapRef.current);
-          console.log(typeof windLayerInstance);
-          mapRef.current.addLayer(windLayerInstance);
-
-          // Move the wind layer to the top
-          mapRef.current.moveLayer(windLayerInstance.id);
-
-          setMapInitialized(true);
-        } catch (error) {
-          console.error("Error adding wind layer:", error);
-        }
+        updateLayers();
+        setMapInitialized(true);  // Set mapInitialized to true when the map is loaded
       });
-
       mapRef.current.addControl(new maplibregl.NavigationControl(), 'top-right');
     };
-
 
     // Default coordinates for South Africa
     const defaultCenter = [22.9375, -30.5595];
@@ -89,6 +74,65 @@ const Map = () => {
     // No cleanup function here to prevent map removal on re-renders
   }, [mapInitialized]);
 
+  useEffect(() => {
+    if (mapRef.current && mapInitialized) {
+      updateLayers();
+    }
+  }, [step, mapInitialized]);
+
+  useEffect(() => {
+    updateDateTime();
+  }, [step]);
+
+  const updateDateTime = () => {
+    const baseDate = new Date();
+    const daysToAdd = Math.floor(step / 8);
+    const hoursToAdd = (step % 8) * 3;
+    
+    const forecastDate = new Date(baseDate);
+    forecastDate.setDate(forecastDate.getDate() + daysToAdd);
+    forecastDate.setHours(hoursToAdd, 0, 0, 0);
+
+    const formattedDate = forecastDate.toLocaleDateString('en-GB', { 
+      day: '2-digit', 
+      month: '2-digit', 
+      year: 'numeric' 
+    });
+    const formattedTime = forecastDate.toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+
+    setCurrentDateTime(`${formattedDate} ${formattedTime}`);
+  };
+
+  const updateLayers = () => {
+    const baseURL = 'https://peterm790.s3.af-south-1.amazonaws.com/test';
+    const dataURL = `${baseURL}/2024-10-05_00_${step}_ws_ws`;
+
+    ['xyz-layer', 'wind'].forEach(layerId => {
+      if (mapRef.current.getLayer(layerId)) {
+        mapRef.current.removeLayer(layerId);
+        if (layerId === 'xyz-layer') mapRef.current.removeSource('xyz-source');
+      }
+    });
+
+    addXYZTileLayer(mapRef.current, `https://t9iixc9z74.execute-api.af-south-1.amazonaws.com/cog/tilejson.json?url=${dataURL}.tif`);
+
+    try {
+      const windLayerInstance = new windLayer(mapRef.current, dataURL);
+      mapRef.current.addLayer(windLayerInstance);
+      mapRef.current.moveLayer(windLayerInstance.id);
+    } catch (error) {
+      console.error("Error adding wind layer:", error);
+    }
+  };
+
+  const handleStepChange = (increment) => {
+    setStep(prevStep => Math.max(0, Math.min(prevStep + increment, MAX_STEP)));
+  };
+
   return (
     <>
       <Head>
@@ -108,12 +152,20 @@ const Map = () => {
           </p>
           <p className={styles.dateTime}>
             <span className={styles.labelText}>Valid Time:</span>{' '}
-            <span className={styles.valueText}>04/10/2024 19:00</span>
+            <span className={styles.valueText}>{currentDateTime}</span>
           </p>
           <p className={styles.dateTime}>
             <span className={styles.labelText}>Layer:</span>{' '}
             <span className={styles.valueText}>Wind Speed</span>
           </p>
+          <p className={styles.dateTime}>
+            <span className={styles.labelText}>Step:</span>{' '}
+            <span className={styles.valueText}>{step}</span>
+          </p>
+          <div className={styles.stepControls}>
+            <button onClick={() => handleStepChange(-1)} disabled={step === 0} aria-label="Previous step"></button>
+            <button onClick={() => handleStepChange(1)} disabled={step === MAX_STEP} aria-label="Next step"></button>
+          </div>
         </div>
 
       </div>

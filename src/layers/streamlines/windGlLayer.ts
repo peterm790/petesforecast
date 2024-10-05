@@ -350,17 +350,11 @@ export default class WindGlLayer extends abstractGlLayer {
     });
   }
 
-  async loadWindData(forecast?: string, resolution = "high"): Promise<void> {
-    const bucketName = "peterm790";
-    const region = "af-south-1";
-    const jsonKey = "test.json"; // Replace with your actual key
-    const imgKey = "test.png";   // Replace with your actual key
+  async loadWindData(dataURL: string): Promise<void> {
+    const jsonUrl = `${dataURL}.json`;
+    const imgUrl = `${dataURL}.png`;
 
-    // Construct the public URLs for the JSON and image data
-    const jsonUrl = `https://${bucketName}.s3.${region}.amazonaws.com/${jsonKey}`;
-    const imgUrl = `https://${bucketName}.s3.${region}.amazonaws.com/${imgKey}`;
-
-    // Fetch data directly from S3
+    // Fetch data directly from the provided URLs
     const jsonResponse = await fetch(jsonUrl);
     const imgResponse = await fetch(imgUrl);
 
