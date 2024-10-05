@@ -85,7 +85,8 @@ const Map = () => {
   }, [step]);
 
   const updateDateTime = () => {
-    const baseDate = new Date();
+    //const baseDate = new Date();
+    const baseDate = new Date('2024-10-05');  // Uncomment this line later to use the actual forecast date
     const daysToAdd = Math.floor(step / 8);
     const hoursToAdd = (step % 8) * 3;
     
@@ -163,8 +164,18 @@ const Map = () => {
             <span className={styles.valueText}>{step}</span>
           </p>
           <div className={styles.stepControls}>
-            <button onClick={() => handleStepChange(-1)} disabled={step === 0} aria-label="Previous step"></button>
-            <button onClick={() => handleStepChange(1)} disabled={step === MAX_STEP} aria-label="Next step"></button>
+            <button onClick={() => handleStepChange(-6)} disabled={step === 0} aria-label="Jump back 6 steps">
+              <span className={styles.doubleArrow}>&laquo;</span>
+            </button>
+            <button onClick={() => handleStepChange(-1)} disabled={step === 0} aria-label="Previous step">
+              <span className={styles.singleArrow}>&lt;</span>
+            </button>
+            <button onClick={() => handleStepChange(1)} disabled={step === MAX_STEP} aria-label="Next step">
+              <span className={styles.singleArrow}>&gt;</span>
+            </button>
+            <button onClick={() => handleStepChange(6)} disabled={step === MAX_STEP} aria-label="Jump forward 6 steps">
+              <span className={styles.doubleArrow}>&raquo;</span>
+            </button>
           </div>
         </div>
 

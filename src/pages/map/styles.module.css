@@ -75,7 +75,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  font-size: 18px;
+  font-size: 16px;
   cursor: pointer;
   display: flex;
   justify-content: center;
@@ -101,21 +101,12 @@
   box-shadow: none;
 }
 
-.stepControls button::before {
-  content: '';
-  display: inline-block;
-  width: 0;
-  height: 0;
-  border-top: 8px solid transparent;
-  border-bottom: 8px solid transparent;
+.singleArrow {
+  font-size: 18px;
+  font-weight: 400;
 }
 
-.stepControls button:first-child::before {
-  border-right: 12px solid #333333;
-  margin-left: -4px;
-}
-
-.stepControls button:last-child::before {
-  border-left: 12px solid #333333;
-  margin-right: -4px;
+.doubleArrow {
+  font-size: 18px;
+  font-weight: 400;
 }
