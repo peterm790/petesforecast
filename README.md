@@ -1,9 +1,31 @@
-see https://github.com/peterm790/petesforecast/issues/2
+This website is the product of previous frustrations trying to share weather forecast data, an unusually rainy Cape Town winter [Record Rains July 2024](https://www.weathersa.co.za/Documents/Corporate/Record_Rains_July_2024_Media_Release_12August_2024_12082024154436.pdf), and a few too many Sundays spent at my desk!
+
+The forecast shown here is the 00z initialization of the NCEP GFS forecast. The forecast will be updated daily at 7:30 am (All times are in UTC). 16 days of forecast data are available in 3-hourly time steps. Make use of the arrows in the top left to jump in 3- or 12-hourly steps.
+
+No demo or subscription APIs are used for this application. The site itself is deployed on Vercel, the tiling endpoints are AWS Lambda functions, and the weather data is updated using a Modal cron job.
+
+The weather data component of this application is run from a single Python script, which makes use of:
+- [Modal](https://modal.com) to create and update the input data.
+- [Xarray](https://docs.xarray.dev/en/stable/#) to process the data.
+- [Rioxarray](https://github.com/corteva/rioxarray) for creating Cloud Optimized GeoTiffs.
+- [Kerchunk](https://github.com/fsspec/kerchunk) for easy and efficient access to the latest GFS forecast data [Lambda GFS reference](https://github.com/peterm790/lambda_GFS_reference).
+- [cmocean](https://github.com/matplotlib/cmocean) for cool perceptually uniform colormaps.
+
+The backend further relies on:
+- [Protomaps](https://protomaps.com) to store and serve all the vector map data.
+- [OpenStreetMap](https://www.openstreetmap.org/#map=6/-28.68/24.68) for the basemap.
+- [titiler](https://github.com/developmentseed/titiler) for serving the foreground raster layer.
+
+The frontend of this site is built on top of a number of open-source tools. These include:
+- [Weather-Maps](https://github.com/fbrosda/weather-maps) for the awesome wind animation.
+- Weather-Maps is in fact a fork of [WebGL Wind from Mapbox](https://github.com/mapbox/webgl-wind).
+- And WebGL Wind is, of course, inspired by the real OG of wind animation, [earth.nullschool.net](https://earth.nullschool.net).
+- [MapLibre](https://maplibre.org) for the map itself.
+
+I have kept the GitHub repo behind this frontend private in part because I am embarrassed by the quality of my code and in part to obscure some of the APIs. I plan to change this soon.
 
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
-## Getting Started
+To Run Locally 
 
 ```bash
 rm -rf node_modules package-lock.json
@@ -12,14 +34,3 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000)  (will redirect to http://localhost:3000/map) with your browser to see the result.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
