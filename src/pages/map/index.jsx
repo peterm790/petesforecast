@@ -7,7 +7,6 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { Protocol } from 'pmtiles';
 
 import { addXYZTileLayer } from '../../layers/rasterLayer';
-//import { addTriangleLayer } from '../../layers/triangleLayer';
 import windLayer from "../../layers/streamlines/windLayer";
 
 import baseMapStyle from './basemapstyle.json';
@@ -18,6 +17,7 @@ const MAX_STEP = 128;
 const Map = () => {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
+  const latestDateRef = useRef('');
   const [mapInitialized, setMapInitialized] = useState(false);
   const [step, setStep] = useState(0);
   const [currentDateTime, setCurrentDateTime] = useState('');
@@ -35,6 +35,22 @@ const Map = () => {
     console.log("Initializing map");
     if (!mapContainerRef.current || mapRef.current || mapInitialized) return;
 
+    const fetchLatestDate = async () => {
+      try {
+        const response = await fetch('/api/latest-data-url');
+        const data = await response.json();
+        console.log("Fetched latest URL:", data.extractedDate);
+        latestDateRef.current = data.extractedDate;
+      } catch (error) {
+        console.error("Error fetching latest data URL:", error);
+      }
+    };
+
+    fetchLatestDate();
+
+    // Default coordinates for South Africa
+    const defaultCenter = [22.9375, -30.5595];
+
     const initializeMap = (center) => {
       mapRef.current = new maplibregl.Map({
         container: mapContainerRef.current,
@@ -46,14 +62,12 @@ const Map = () => {
       });
 
       mapRef.current.on('load', () => {
+        setMapInitialized(true);
         updateLayers();
-        setMapInitialized(true);  // Set mapInitialized to true when the map is loaded
       });
+
       mapRef.current.addControl(new maplibregl.NavigationControl(), 'top-right');
     };
-
-    // Default coordinates for South Africa
-    const defaultCenter = [22.9375, -30.5595];
 
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -85,8 +99,8 @@ const Map = () => {
   }, [step]);
 
   const updateDateTime = () => {
-    //const baseDate = new Date();
-    const baseDate = new Date('2024-10-05');  // Uncomment this line later to use the actual forecast date
+    const baseDate = new Date();
+    //const baseDate = new Date('2024-10-05');  // Uncomment this line later to use the actual forecast date
     const daysToAdd = Math.floor(step / 8);
     const hoursToAdd = (step % 8) * 3;
     
@@ -109,8 +123,10 @@ const Map = () => {
   };
 
   const updateLayers = () => {
-    const baseURL = 'https://peterm790.s3.af-south-1.amazonaws.com/test';
-    const dataURL = `${baseURL}/2024-10-05_00_${step}_ws_ws`;
+    const baseURL = `https://peterm790.s3.af-south-1.amazonaws.com/petesforecast/wind/${latestDateRef.current}`;
+    const dataURL = `${baseURL}/${latestDateRef.current}_00_${step}_ws`;
+
+    console.log("Data URL:", dataURL);
 
     ['xyz-layer', 'wind'].forEach(layerId => {
       if (mapRef.current.getLayer(layerId)) {
@@ -134,6 +150,15 @@ const Map = () => {
     setStep(prevStep => Math.max(0, Math.min(prevStep + increment, MAX_STEP)));
   };
 
+  // Add this helper function inside the Map component
+  const formatModelRunDate = (dateString) => {
+    if (!dateString) return '';
+    const year = dateString.slice(0, 4);
+    const month = dateString.slice(4, 6);
+    const day = dateString.slice(6, 8);
+    return `${day}/${month}/${year}`;
+  };
+
   return (
     <>
       <Head>
@@ -152,16 +177,16 @@ const Map = () => {
             <span className={styles.valueText}>GFS</span>
           </p>
           <p className={styles.dateTime}>
-            <span className={styles.labelText}>Valid Time:</span>{' '}
-            <span className={styles.valueText}>{currentDateTime}</span>
+            <span className={styles.labelText}>Model Initialised:</span>{' '}
+            <span className={styles.valueText}>{formatModelRunDate(latestDateRef.current)} 00z</span>
           </p>
           <p className={styles.dateTime}>
             <span className={styles.labelText}>Layer:</span>{' '}
             <span className={styles.valueText}>Wind Speed</span>
           </p>
           <p className={styles.dateTime}>
-            <span className={styles.labelText}>Step:</span>{' '}
-            <span className={styles.valueText}>{step}</span>
+            <span className={styles.labelText}>Valid Time:</span>{' '}
+            <span className={styles.valueText}>{currentDateTime}</span>
           </p>
           <div className={styles.stepControls}>
             <button onClick={() => handleStepChange(-6)} disabled={step === 0} aria-label="Jump back 6 steps">
