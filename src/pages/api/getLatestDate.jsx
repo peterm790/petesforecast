@@ -7,6 +7,10 @@ export default async function handler(req, res) {
 
   const client = new S3Client({
     region: "af-south-1",
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    },
   });
 
   const command = new ListObjectsV2Command({
@@ -16,17 +20,11 @@ export default async function handler(req, res) {
   });
 
   try {
-    console.log("Fetching latest data URL");
     const response = await client.send(command);
-    console.log("Response:", response);
-    const folders = response.CommonPrefixes.map(prefix => prefix.Prefix);
-    console.log("Folders:", folders);
+    const folders = response.CommonPrefixes ? response.CommonPrefixes.map(prefix => prefix.Prefix) : [];
     const latestFolder = folders.sort().pop();
-    console.log("Latest folder:", latestFolder);
     const dateMatch = latestFolder.match(/\/(\d{8})\//);
-    console.log("Date match:", dateMatch);
     const extractedDate = dateMatch ? dateMatch[1] : null;
-    console.log("Extracted date:", extractedDate);
     return res.status(200).json({ extractedDate });
   } catch (error) {
     console.error("Error fetching latest data URL:", error);
