@@ -37,7 +37,7 @@ const Map = () => {
 
     const fetchLatestDate = async () => {
       try {
-        const response = await fetch('/api/latest-data-url');
+        const response = await fetch('/api/getLatestDate');
         const data = await response.json();
         console.log("Fetched latest URL:", data.extractedDate);
         latestDateRef.current = data.extractedDate;
