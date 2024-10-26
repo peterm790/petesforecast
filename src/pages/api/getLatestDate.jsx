@@ -18,7 +18,7 @@ export default async function handler(req, res) {
   const command = new ListObjectsV2Command({
     Bucket: "peterm790",
     Prefix: "petesforecast/wind/",
-    Delimiter: "/",
+    MaxKeys: 1,
   });
 
   try {
