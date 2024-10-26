@@ -38,21 +38,36 @@ export default async function handler(req, res) {
 
   try {
     const today = new Date();
+    console.log(`Server time: ${today.toISOString()}`);
+    
     for (let i = 0; i < 2; i++) {
       const dateString = getDateString(today);
-      if (await checkDateFolder(dateString)) {
+      console.log(`Checking folder for date: ${dateString}`);
+      
+      const folderExists = await checkDateFolder(dateString);
+      console.log(`Folder exists: ${folderExists}`);
+      
+      if (folderExists) {
+        console.log(`Returning date: ${dateString}`);
         return res.status(200).json({ extractedDate: dateString });
       }
+      
       today.setDate(today.getDate() - 1); // Move to previous day
     }
 
+    console.log("Today and yesterday folders not found, falling back to getLatestFolder");
+    
     // If neither today nor yesterday's folder exists, fall back to finding the latest folder
     const latestFolder = await getLatestFolder(client);
-    const dateMatch = latestFolder.match(/\/(\d{8})\//);
+    console.log(`Latest folder found: ${latestFolder}`);
+    
+    const dateMatch = latestFolder.match(/(\d{8})\//);
     const extractedDate = dateMatch ? dateMatch[1] : null;
+    console.log(`Extracted date: ${extractedDate}`);
+    
     return res.status(200).json({ extractedDate });
   } catch (error) {
-    console.error("Error fetching latest data URL:", error);
+    console.error("Error in handler:", error);
     return res.status(500).json({ error: "Failed to fetch latest data URL" });
   }
 }
@@ -62,13 +77,21 @@ async function getLatestFolder(client) {
     Bucket: "peterm790",
     Prefix: "petesforecast/wind/",
     Delimiter: "/",
-    MaxKeys: 1,
   });
 
   try {
     const response = await client.send(command);
-    const folders = response.CommonPrefixes ? response.CommonPrefixes.map(prefix => prefix.Prefix) : [];
-    const latestFolder = folders.sort().pop();
+    const folders = response.CommonPrefixes
+      ? response.CommonPrefixes
+          .map(prefix => prefix.Prefix)
+          .filter(prefix => /\d{8}\/$/.test(prefix))
+      : [];
+    
+    if (folders.length === 0) {
+      throw new Error("No valid date folders found");
+    }
+
+    const latestFolder = folders.sort((a, b) => b.localeCompare(a))[0];
     return latestFolder;
   } catch (error) {
     console.error("Error fetching latest folder:", error);
