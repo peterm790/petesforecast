@@ -12,7 +12,10 @@ import 'tldraw/tldraw.css';
 import { addXYZTileLayer } from '../../layers/rasterLayer';
 import windLayer from "../../layers/streamlines/windLayer";
 
-import baseMapStyle from '../../styles/basemapstyle.json';
+import baseMapStyleJson from '../../styles/basemapstyle.json';
+import { StyleSpecification } from 'maplibre-gl';
+const baseMapStyle: StyleSpecification = baseMapStyleJson as StyleSpecification;
+
 import styles from './styles.module.css';
 
 import MenuBar from '../../components/MenuBar/MenuBar';
@@ -23,7 +26,7 @@ const MAX_STEP = 128;
 
 const Map = () => {
   const mapContainerRef = useRef(null);
-  const mapRef = useRef(null);
+  const mapRef = useRef<maplibregl.Map | null>(null);
   const latestDateRef = useRef('');
   const [mapInitialized, setMapInitialized] = useState(false);
   const [step, setStep] = useState(0);
@@ -50,7 +53,14 @@ const Map = () => {
     ActionsMenu: null,
   };
   const options: Partial<TldrawOptions> = { maxPages: 1 };
-  const cameraOptions: TLCameraOptions = {isLocked: true};
+
+  const cameraOptions: TLCameraOptions = {
+    isLocked: true,
+    wheelBehavior: 'zoom',
+    panSpeed: 1,
+    zoomSpeed: 1,
+    zoomSteps: [0.1, 0.25, 0.5, 1, 2, 4, 8],
+  };
 
   // needed to init protomaps protocol
   useEffect(() => {
@@ -81,24 +91,26 @@ const Map = () => {
     fetchLatestDate();
 
     // Default to cape town
-    const defaultCenter = [22.9375, -30.5595];
+    const defaultCenter: [number, number] = [22.9375, -30.5595];
 
-    const initializeMap = (center) => {
-      mapRef.current = new maplibregl.Map({
-        container: mapContainerRef.current,
-        style: baseMapStyle,
-        center: center,
-        zoom: 5,
-        minZoom: 1,
-        maxZoom: 7,
-      });
+    const initializeMap = (center: [number, number]) => {
+      if (mapContainerRef.current) {
+        mapRef.current = new maplibregl.Map({
+          container: mapContainerRef.current,
+          style: baseMapStyle,
+          center: center,
+          zoom: 5,
+          minZoom: 1,
+          maxZoom: 7,
+        });
 
-      mapRef.current.on('load', () => {
-        setMapInitialized(true);
-        updateLayers();
-      });
+        mapRef.current.on('load', () => {
+          setMapInitialized(true);
+          updateLayers();
+        });
 
-      mapRef.current.addControl(new maplibregl.NavigationControl(), 'top-right');
+        mapRef.current.addControl(new maplibregl.NavigationControl(), 'top-right');
+      }
     };
 
     if (navigator.geolocation) {
@@ -159,31 +171,31 @@ const Map = () => {
 
     // Remove existing layers when updating layers
     ['xyz-layer', 'wind'].forEach((layerId) => {
-      if (mapRef.current.getLayer(layerId)) {
-        mapRef.current.removeLayer(layerId);
-        if (layerId === 'xyz-layer') mapRef.current.removeSource('xyz-source');
+      if (mapRef.current!.getLayer(layerId)) {
+        mapRef.current!.removeLayer(layerId);
+        if (layerId === 'xyz-layer') mapRef.current!.removeSource('xyz-source');
       }
     });
 
     addXYZTileLayer(
-      mapRef.current,
+      mapRef.current!,
       `https://t9iixc9z74.execute-api.af-south-1.amazonaws.com/cog/tilejson.json?url=${dataURL}.tif`
     );
 
     try {
-      const windLayerInstance = new windLayer(mapRef.current, dataURL);
-      mapRef.current.addLayer(windLayerInstance);
-      mapRef.current.moveLayer(windLayerInstance.id);
+      const windLayerInstance = new windLayer(mapRef.current!, dataURL);
+      mapRef.current!.addLayer(windLayerInstance);
+      mapRef.current!.moveLayer(windLayerInstance.id);
     } catch (error) {
       console.error("Error adding wind layer:", error);
     }
   };
 
-  const handleStepChange = (increment) => {
+  const handleStepChange = (increment: number) => {
     setStep((prevStep) => Math.max(0, Math.min(prevStep + increment, MAX_STEP)));
   };
 
-  const formatModelRunDate = (dateString) => {
+  const formatModelRunDate = (dateString: string) => {
     if (!dateString) return '';
     const year = dateString.slice(0, 4);
     const month = dateString.slice(4, 6);

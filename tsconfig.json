@@ -17,6 +17,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/layers/triangleLayer.jsx", "src/layers/rasterLayer.jsx", "src/pages/map/index.jsx", "src/pages/api/loadWindData.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/layers/triangleLayer.jsx", "src/layers/rasterLayer.jsx", "src/pages/map/index.tsx", "src/pages/api/loadWindData.js"],
   "exclude": ["node_modules"]
 }
