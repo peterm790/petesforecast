@@ -15,7 +15,9 @@
     "next": "14.2.3",
     "pmtiles": "^3.0.5",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-icons": "^5.4.0",
+    "tldraw": "^3.6.1"
   },
   "devDependencies": {
     "@types/node": "^20",
@@ -26,5 +28,9 @@
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "5.6.2"
-  }
+  },
+  "description": "This website is the product of previous frustrations trying to [share weather forecast data](https://petemarsh.com/wrf), [an unusually rainy Cape Town winter](https://www.weathersa.co.za/Documents/Corporate/Record_Rains_July_2024_Media_Release_12August_2024_12082024154436.pdf), and a few too many Sundays spent at my desk!",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC"
 }

@@ -1,0 +1,112 @@
+.menuBar {
+    position: absolute;
+    top: 50px; /* Adjust as needed to position below the title */
+    left: 10px;
+    z-index: 1000;
+    background-color: #fff;
+    border-radius: 12px;
+    box-sizing: content-box;
+    color: #000;
+    padding: 4px 8px;
+    font: 14px "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font-weight: 400;
+    display: flex;
+    flex-direction: column; /* This will stack the children vertically */
+    align-items: flex-start; /* Align items to the start of the cross axis */
+  }
+  
+  .menuBar .dateTime {
+    margin: 2px 0; /* Add some vertical spacing between items */
+  }
+  
+  .valueText {
+    font-weight: 500;
+    color: #334455;
+  }
+  
+  .labelText {
+    color: #666666; /* A lighter shade of gray */
+    font-weight: normal;
+  }
+  
+  .stepControls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+  }
+  
+  .stepControls button {
+    background-color: #ffffff;
+    border: none;
+    color: #333333;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .stepControls button:hover {
+    background-color: #f0f0f0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .stepControls button:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .stepControls button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  
+  .singleArrow {
+    font-size: 18px;
+    font-weight: 400;
+  }
+  
+  .doubleArrow {
+    font-size: 18px;
+    font-weight: 400;
+  }
+  
+  .drawButton {
+    background-color: #ffffff;
+    border: none;
+    color: #333333;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .drawButton:hover {
+    background-color: #f0f0f0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .drawButton:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .drawButton.active {
+    background-color: #0066cc;
+    color: white;
+  }
