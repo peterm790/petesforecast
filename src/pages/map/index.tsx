@@ -18,9 +18,9 @@ const baseMapStyle: StyleSpecification = baseMapStyleJson as StyleSpecification;
 
 import styles from './styles.module.css';
 
-import MenuBar from '../../components/MenuBar/menuBar';
-import AboutPopup from '../../components/About/aboutPopup';
-import Title from '../../components/Title/title'; 
+import MenuBar from '../../components/MenuBar/MenuBar';
+import AboutPopup from '../../components/About/AboutPopup';
+import Title from '../../components/Title/Title'; 
 const MAX_STEP = 128;
 
 const Map = () => {
