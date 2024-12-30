@@ -44,12 +44,8 @@ const MenuBar = ({
           <span className={styles.doubleArrow}>&raquo;</span>
         </button>
       </div>
-      <button 
-        onClick={toggleDrawMode} 
-        className={`${styles.drawButton} ${drawMode ? styles.active : ''}`} 
-        aria-label="Toggle Draw Mode"
-      >
-        <FaPencilAlt />
+      <button onClick={toggleDrawMode} className={styles.drawButton} aria-label="Toggle draw mode">
+        <FaPencilAlt className={drawMode ? styles.active : ''} />
       </button>
     </div>
   );
