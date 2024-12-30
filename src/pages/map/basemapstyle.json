@@ -1829,16 +1829,6 @@
             }
         },
         {
-            "id": "coastline",
-            "type": "line",
-            "source": "protomaps",
-            "source-layer": "earth",
-            "paint": {
-                "line-color": "#adadad",
-                "line-width": 1.5
-            }
-        },
-        {
             "id": "boundaries_country",
             "type": "line",
             "source": "protomaps",

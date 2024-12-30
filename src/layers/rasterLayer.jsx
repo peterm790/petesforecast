@@ -30,9 +30,9 @@ export function addXYZTileLayer(map, url) {
         minzoom: 0,
         maxzoom: 20,
         paint: {
-          'raster-opacity': 0.75,
+          'raster-opacity': 1,
         },
-      });
+      }, 'physical_line_stream');
 
       console.log("XYZ Tile Layer added successfully");
     })

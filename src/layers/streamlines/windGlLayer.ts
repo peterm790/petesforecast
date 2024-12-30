@@ -145,7 +145,7 @@ export default class WindGlLayer extends abstractGlLayer {
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     if (this.screenTexture) {
-      this.drawTexture(this.screenTexture, 0.8);
+      this.drawTexture(this.screenTexture, 0.9);
     }
     gl.disable(gl.BLEND);
 
@@ -306,7 +306,7 @@ export default class WindGlLayer extends abstractGlLayer {
     }
     gl.uniform1f(
       prog.getUniform("u_speed_factor"),
-      this.speedFactor / (2 * this.map.getZoom() + 5)
+      this.speedFactor / (6 * this.map.getZoom())
     );
     gl.uniform1f(prog.getUniform("u_drop_rate"), this.dropRate);
     gl.uniform1f(prog.getUniform("u_drop_rate_bump"), this.dropRateBump);
@@ -386,9 +386,9 @@ export default class WindGlLayer extends abstractGlLayer {
     const particleRes = (this.particleStateResolution = Math.ceil(
       Math.sqrt(numParticles)
     ));
-    this.numParticles = particleRes * particleRes;
+    this.numParticles = (particleRes * particleRes);
 
-    const particleState = new Uint8Array(this.numParticles * 4);
+    const particleState = new Uint8Array(this.numParticles * 8);
     for (let i = 0; i < particleState.length; i++) {
       particleState[i] = Math.floor(Math.random() * 256);
     }

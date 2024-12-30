@@ -12,8 +12,8 @@ import 'tldraw/tldraw.css';
 import { addXYZTileLayer } from '../../layers/rasterLayer';
 import windLayer from "../../layers/streamlines/windLayer";
 
-import baseMapStyleJson from '../../styles/basemapstyle.json';
 import { StyleSpecification } from 'maplibre-gl';
+import baseMapStyleJson from '../../styles/basemapstyle.json';
 const baseMapStyle: StyleSpecification = baseMapStyleJson as StyleSpecification;
 
 import styles from './styles.module.css';
@@ -95,13 +95,14 @@ const Map = () => {
 
     const initializeMap = (center: [number, number]) => {
       if (mapContainerRef.current) {
+        // Initialize the base map
         mapRef.current = new maplibregl.Map({
           container: mapContainerRef.current,
           style: baseMapStyle,
           center: center,
           zoom: 5,
-          minZoom: 1,
-          maxZoom: 7,
+          minZoom: 2,
+          maxZoom: 40,
         });
 
         mapRef.current.on('load', () => {

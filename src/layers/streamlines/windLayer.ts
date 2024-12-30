@@ -4,7 +4,7 @@ import { ShaderType } from "./util/util";
 
 export default class WindLayer extends abstractCustomLayer {
   shaders: Promise<string[]>;
-  private numParticles: number = 2 ** 11.5; // Kept your original setting
+  private numParticles: number = 2 ** 11.5; 
   private dataURL: string;
 
   constructor(map?: maplibregl.Map, dataURL?: string) {
@@ -26,12 +26,21 @@ export default class WindLayer extends abstractCustomLayer {
     const layer = new WindGlLayer(shaders, map, gl);
     this.layer = layer;
 
-    this.setNumParticles();
-    this.addListener(map, ["zoomstart", "mousedown"], () => {
+    // Set initial visibility based on zoom level
+    this.updateVisibility(map.getZoom());
+
+    this.setNumParticles(map);
+    this.addListener(map, ["movestart", "zoomstart", "mousedown", "touchstart"], () => {
       if (this.visible) this.toggle();
     });
-    this.addListener(map, ["zoomend", "mouseup"], () => {
+    this.addListener(map, ["moveend", "zoomend", "mouseup", "touchend"], () => {
       if (!this.visible) this.toggle();
+    });
+
+    // Add event listener for zoom events to update visibility
+    map.on('zoom', () => {
+      this.updateVisibility(map.getZoom());
+      this.setNumParticles(map);
     });
 
     const f = (): void => {
@@ -64,11 +73,18 @@ export default class WindLayer extends abstractCustomLayer {
     }
   }
 
-  private setNumParticles(): void {
+  private setNumParticles(map: maplibregl.Map): void {
     if (this.layer) {
       const layer = this.layer as WindGlLayer;
+      const zoom = map.getZoom();
+      this.numParticles = zoom > 8 ? 0 : 2 ** 10;
       layer.setNumParticles(this.numParticles);
     }
+  }
+
+  private updateVisibility(zoom: number): void {
+    this.visible = zoom <= 7;
+    console.log("Current zoom level:", zoom, "Visibility:", this.visible);
   }
 
   onRemove(): void {
