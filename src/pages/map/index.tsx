@@ -179,7 +179,7 @@ const Map = () => {
 
     addXYZTileLayer(
       mapRef.current!,
-      `https://t9iixc9z74.execute-api.af-south-1.amazonaws.com/cog/tilejson.json?url=${dataURL}.tif`
+      `https://t9iixc9z74.execute-api.af-south-1.amazonaws.com/cog/tilejson.json?url=${dataURL}_rainbow.tif`
     );
 
     try {
