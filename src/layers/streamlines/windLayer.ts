@@ -4,7 +4,7 @@ import { ShaderType } from "./util/util";
 
 export default class WindLayer extends abstractCustomLayer {
   shaders: Promise<string[]>;
-  private numParticles: number = 2 ** 11; 
+  private numParticles: number = 2 ** 10; 
   private dataURL: string;
 
   constructor(map?: maplibregl.Map, dataURL?: string) {
@@ -78,7 +78,7 @@ export default class WindLayer extends abstractCustomLayer {
     if (this.layer) {
       const layer = this.layer as WindGlLayer;
       const zoom = map.getZoom();
-      this.numParticles = zoom > 9 ? 2 ** 9 : zoom > 7 ? 2 ** 10 : 2 ** 11;
+      this.numParticles = zoom > 9 ? 2 ** 9 : zoom > 5 ? 2 ** 10 : 2 ** 11;
       layer.setNumParticles(this.numParticles);
     }
   }
