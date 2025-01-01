@@ -3054,62 +3054,6 @@
             }
         },
         {
-            "id": "places_region",
-            "type": "symbol",
-            "source": "protomaps",
-            "source-layer": "places",
-            "filter": [
-                "==",
-                "pmap:kind",
-                "region"
-            ],
-            "layout": {
-                "symbol-sort-key": [
-                    "get",
-                    "pmap:min_zoom"
-                ],
-                "text-field": [
-                    "step",
-                    [
-                        "zoom"
-                    ],
-                    [
-                        "get",
-                        "name:short"
-                    ],
-                    6,
-                    [
-                        "get",
-                        "name"
-                    ]
-                ],
-                "text-font": [
-                    "Noto Sans Regular"
-                ],
-                "text-size": [
-                    "interpolate",
-                    [
-                        "linear"
-                    ],
-                    [
-                        "zoom"
-                    ],
-                    3,
-                    11,
-                    7,
-                    16
-                ],
-                "text-radial-offset": 0.2,
-                "text-anchor": "center",
-                "text-transform": "uppercase"
-            },
-            "paint": {
-                "text-color": "#b3b3b3",
-                "text-halo-color": "#ffffff",
-                "text-halo-width": 2
-            }
-        },
-        {
             "id": "places_country",
             "type": "symbol",
             "source": "protomaps",

@@ -11,6 +11,7 @@ type WindInfo = {
   vMax: number;
 };
 
+
 const defaultRampColors: { [key: number]: string } = {
   0.0: '#ffffff',
   0.2: '#ffffff',
@@ -45,12 +46,12 @@ function getColorRamp(colors: { [key: number]: string }): Uint8Array {
 }
 
 export default class WindGlLayer extends abstractGlLayer {
-  fadeOpacity = 0.9;
-  speedFactor = 0.2;
-  dropRate = 0.01;
+  fadeOpacity = 0.93;
+  speedFactor = 0.15;
+  dropRate = 0.02;
   dropRateBump = 0.01;
-  numParticles = 2 ** 14;
-  particleStateResolution = 0;
+  numParticles = 2 ** 16;
+  particleStateResolution = Math.ceil(Math.sqrt(2 ** 16));
 
   isZoom = false;
 
