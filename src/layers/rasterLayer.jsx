@@ -30,7 +30,7 @@ export function addXYZTileLayer(map, url) {
         minzoom: 0,
         maxzoom: 20,
         paint: {
-          'raster-opacity': 0.9,
+          'raster-opacity': 1,
           'raster-resampling': 'linear'
         },
       }, 'physical_line_stream');
