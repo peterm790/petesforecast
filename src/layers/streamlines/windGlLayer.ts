@@ -146,7 +146,7 @@ export default class WindGlLayer extends abstractGlLayer {
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     if (this.screenTexture) {
-      this.drawTexture(this.screenTexture, 0.9);
+      this.drawTexture(this.screenTexture, 0.7);
     }
     gl.disable(gl.BLEND);
 
