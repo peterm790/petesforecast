@@ -6,7 +6,7 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { Protocol } from 'pmtiles';
 
-import {Tldraw, TldrawOptions, TLCameraOptions, TLComponents, DefaultToolbar, DefaultToolbarContent} from 'tldraw';
+import { Tldraw, TldrawOptions, TLCameraOptions, TLComponents, DefaultToolbar, DefaultToolbarContent } from 'tldraw';
 import 'tldraw/tldraw.css';
 
 import { addXYZTileLayer } from '../../layers/rasterLayer';
@@ -33,6 +33,7 @@ const Map = () => {
   const [showAbout, setShowAbout] = useState(false);
   const [drawMode, setDrawMode] = useState(false);
   const [colorScheme, setColorScheme] = useState('rainbow');
+  const [selectedVariable, setSelectedVariable] = useState('ws');
 
   // toggle color scheme
   const toggleColorScheme = () => {
@@ -140,7 +141,7 @@ const Map = () => {
     if (mapRef.current && mapInitialized) {
       updateLayers();
     }
-  }, [step, mapInitialized]);
+  }, [step, colorScheme, mapInitialized, selectedVariable]);
 
   useEffect(() => {
     updateDateTime();
@@ -170,10 +171,11 @@ const Map = () => {
   };
 
   const updateLayers = () => {
-    const baseURL = `https://peterm790.s3.af-south-1.amazonaws.com/petesforecast/ws/${latestDateRef.current}`;
-    const dataURL = `${baseURL}/${latestDateRef.current}_00_${step}_ws`;
+    const windDataURL = `https://peterm790.s3.af-south-1.amazonaws.com/petesforecast/ws/${latestDateRef.current}/${latestDateRef.current}_00_${step}_ws`;
 
-    console.log("Data URL:", dataURL);
+    const rasterDataURL = `https://peterm790.s3.af-south-1.amazonaws.com/petesforecast/${selectedVariable}/${latestDateRef.current}/${latestDateRef.current}_00_${step}_${selectedVariable}_${colorScheme}`;
+
+    console.log("Data URL:", rasterDataURL);
 
     // Remove existing layers when updating layers
     ['xyz-layer', 'wind'].forEach((layerId) => {
@@ -185,11 +187,11 @@ const Map = () => {
 
     addXYZTileLayer(
       mapRef.current!,
-      `https://t9iixc9z74.execute-api.af-south-1.amazonaws.com/cog/tilejson.json?url=${dataURL}_${colorScheme}.tif`
+      `https://t9iixc9z74.execute-api.af-south-1.amazonaws.com/cog/tilejson.json?url=${rasterDataURL}.tif`
     );
 
     try {
-      const windLayerInstance = new windLayer(mapRef.current!, dataURL);
+      const windLayerInstance = new windLayer(mapRef.current!, windDataURL);
       mapRef.current!.addLayer(windLayerInstance);
       mapRef.current!.moveLayer(windLayerInstance.id);
     } catch (error) {
@@ -225,13 +227,12 @@ const Map = () => {
         <div ref={mapContainerRef} className={styles.map} />
 
         <div style={{ position: 'fixed', inset: 0, zIndex: drawMode ? 1000 : -1 }}>
-            <Tldraw 
+          <Tldraw 
             onMount={(editor) => {editor.setCurrentTool('draw')}}
             components={TLcomponents}
             options={options}
             cameraOptions={cameraOptions}
-            //hideUi
-            />
+          />
         </div>
 
         <MenuBar 
@@ -245,6 +246,8 @@ const Map = () => {
             drawMode={drawMode}
             toggleColorScheme={toggleColorScheme}
             colorScheme={colorScheme}
+            selectedVariable={selectedVariable}
+            setSelectedVariable={setSelectedVariable}
         />
 
         <div className={styles.aboutButtonContainer}>
