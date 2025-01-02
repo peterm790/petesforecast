@@ -110,3 +110,91 @@
     background-color: #0066cc;
     color: white;
   }
+
+  .buttonGroup {
+    display: flex;
+    align-items: center;
+    margin-top: 10px; /* Add some spacing from the step controls */
+  }
+  
+  .colorButton {
+    background-color: #ffffff;
+    border: none;
+    color: #333333;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .colorButton:hover {
+    background-color: #f0f0f0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .colorButton:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .colorButton.active {
+    background-color: #0066cc;
+    color: white;
+  }
+
+  .variableButton {
+    background-color: #ffffff;
+    border: none;
+    color: #333333;
+    width: 100%;
+    height: 30px;
+    border-radius: 14px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 5px 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .variableButton:hover {
+    background-color: #f0f0f0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .variableButton:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .variableButton.active {
+    background-color: #f0f0f0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .variableButtonGroup {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    margin-bottom: 1px; /* Add some spacing from the other buttons */
+    overflow: hidden;
+    max-height: 30px; /* Initially show only one button */
+    transition: max-height 0.3s ease;
+  }
+  
+  .variableButtonGroup.expanded {
+    max-height: 200px; /* Adjust as needed to show all buttons */
+  }
+  
+  .variableButtonGroup:hover {
+    max-height: 200px; /* Adjust as needed to show all buttons */
+  }

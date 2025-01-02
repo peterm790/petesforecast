@@ -1,5 +1,5 @@
-import React from 'react';
-import { FaPencilAlt } from 'react-icons/fa'; // Import the crayon icon
+import React, { useState } from 'react';
+import { FaPencilAlt, FaPalette } from 'react-icons/fa';
 import styles from './MenuBar.module.css';
 
 const MenuBar = ({ 
@@ -10,8 +10,32 @@ const MenuBar = ({
   formatModelRunDate, 
   latestDate,
   toggleDrawMode,
-  drawMode
+  drawMode,
+  toggleColorScheme,
+  colorScheme,
+  selectedVariable,
+  setSelectedVariable
 }) => {
+  const variables = [
+    { key: 'ws', label: 'Wind Speed' },
+    { key: 't2m', label: 'Ambient Temperature' },
+    { key: 'rh', label: 'Relative Humidity' },
+    { key: 'pres', label: 'Pressure' },
+    { key: 'refd', label: 'Simulated Radar' }
+  ];
+
+  const [expanded, setExpanded] = useState(false);
+
+  const handleVariableButtonClick = (key) => {
+    setSelectedVariable(key);
+    setExpanded(true);
+    setTimeout(() => setExpanded(false), 2000);
+  };
+
+  const selectedVariableLabel = variables.find(variable => variable.key === selectedVariable)?.label || 'Wind Speed';
+
+  const sortedVariables = variables.sort((a, b) => (a.key === selectedVariable ? -1 : b.key === selectedVariable ? 1 : 0));
+
   return (
     <div className={styles.menuBar}>
       <p className={styles.dateTime}>
@@ -24,7 +48,7 @@ const MenuBar = ({
       </p>
       <p className={styles.dateTime}>
         <span className={styles.labelText}>Layer:</span>{' '}
-        <span className={styles.valueText}>Wind Speed</span>
+        <span className={styles.valueText}>{selectedVariableLabel}</span>
       </p>
       <p className={styles.dateTime}>
         <span className={styles.labelText}>Valid Time:</span>{' '}
@@ -44,9 +68,26 @@ const MenuBar = ({
           <span className={styles.doubleArrow}>&raquo;</span>
         </button>
       </div>
-      <button onClick={toggleDrawMode} className={styles.drawButton} aria-label="Toggle draw mode">
-        <FaPencilAlt className={drawMode ? styles.active : ''} />
-      </button>
+      <div className={`${styles.variableButtonGroup} ${expanded ? styles.expanded : ''}`}>
+        {sortedVariables.map((variable) => (
+          <button
+            key={variable.key}
+            onClick={() => handleVariableButtonClick(variable.key)}
+            className={`${styles.variableButton} ${selectedVariable === variable.key ? styles.active : ''}`}
+            aria-label={`Select ${variable.label}`}
+          >
+            <span className={styles.labelText}>{variable.label}</span>
+          </button>
+        ))}
+      </div>
+      <div className={styles.buttonGroup}>
+        <button onClick={toggleColorScheme} className={styles.colorButton} aria-label="Toggle color scheme">
+          <FaPalette className={colorScheme === 'rainbow' ? styles.active : ''} />
+        </button>
+        <button onClick={toggleDrawMode} className={styles.drawButton} aria-label="Toggle draw mode">
+          <FaPencilAlt className={drawMode ? styles.active : ''} />
+        </button>
+      </div>
     </div>
   );
 };

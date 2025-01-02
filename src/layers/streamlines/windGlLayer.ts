@@ -46,10 +46,10 @@ function getColorRamp(colors: { [key: number]: string }): Uint8Array {
 }
 
 export default class WindGlLayer extends abstractGlLayer {
-  fadeOpacity = 0.95;
+  fadeOpacity = 0.9;
   speedFactor = 0.15;
   dropRate = 0.01;
-  dropRateBump = 0.01;
+  dropRateBump = 0.05;
   numParticles = 2 ** 14;
   particleStateResolution = Math.ceil(Math.sqrt(2 ** 14));
 
@@ -365,6 +365,8 @@ export default class WindGlLayer extends abstractGlLayer {
 
     this.windData = rotate(this.windData, jsonData);
     const img = await this.loadBase64Image(imgBase64);
+
+    console.log(jsonData);
 
     this.windTexture = rotate(
       this.windTexture,

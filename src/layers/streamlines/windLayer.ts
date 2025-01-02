@@ -41,7 +41,7 @@ export default class WindLayer extends abstractCustomLayer {
     map.on('zoom', () => {
       this.updateVisibility(map.getZoom());
       this.setNumParticles(map);
-      console.log("Zoom level:", map.getZoom());
+      //console.log("Zoom level:", map.getZoom());
     });
 
     const f = (): void => {
@@ -70,7 +70,7 @@ export default class WindLayer extends abstractCustomLayer {
   private async loadForecast(): Promise<void> {
     if (this.layer) {
       const layer = this.layer as WindGlLayer;
-      await layer.loadWindData(this.dataURL); // Kept "HIGH" as in your original code
+      await layer.loadWindData(this.dataURL); 
     }
   }
 

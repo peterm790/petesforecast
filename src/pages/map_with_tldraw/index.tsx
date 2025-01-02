@@ -6,6 +6,9 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { Protocol } from 'pmtiles';
 
+import {Tldraw, TldrawOptions, TLCameraOptions, TLComponents, DefaultToolbar, DefaultToolbarContent} from 'tldraw';
+import 'tldraw/tldraw.css';
+
 import { addXYZTileLayer } from '../../layers/rasterLayer';
 import windLayer from "../../layers/streamlines/windLayer";
 
@@ -30,7 +33,6 @@ const Map = () => {
   const [showAbout, setShowAbout] = useState(false);
   const [drawMode, setDrawMode] = useState(false);
   const [colorScheme, setColorScheme] = useState('rainbow');
-  const [selectedVariable, setSelectedVariable] = useState('ws');
 
   // toggle color scheme
   const toggleColorScheme = () => {
@@ -39,6 +41,31 @@ const Map = () => {
 
   // toggle about popup
   const toggleAbout = () => setShowAbout(!showAbout);
+
+  // TLDraw components to make background transparent
+  function Background() {
+    return <div style={{ backgroundColor: 'transparent' }} />;
+  }
+  const TLcomponents: TLComponents = {
+    Background,
+    NavigationPanel: null,
+    Toolbar: () => (
+      <DefaultToolbar>
+        <DefaultToolbarContent />
+      </DefaultToolbar>
+    ),
+    PageMenu: null,
+    ActionsMenu: null,
+  };
+  const options: Partial<TldrawOptions> = { maxPages: 1 };
+
+  const cameraOptions: TLCameraOptions = {
+    isLocked: true,
+    wheelBehavior: 'zoom',
+    panSpeed: 1,
+    zoomSpeed: 1,
+    zoomSteps: [0.1, 0.25, 0.5, 1, 2, 4, 8],
+  };
 
   // needed to init protomaps protocol
   useEffect(() => {
@@ -79,7 +106,7 @@ const Map = () => {
           style: baseMapStyle,
           center: center,
           zoom: 5,
-          minZoom: 1,
+          minZoom: 2,
           maxZoom: 40,
         });
 
@@ -113,7 +140,7 @@ const Map = () => {
     if (mapRef.current && mapInitialized) {
       updateLayers();
     }
-  }, [step, colorScheme, mapInitialized, selectedVariable]);
+  }, [step, mapInitialized]);
 
   useEffect(() => {
     updateDateTime();
@@ -143,11 +170,10 @@ const Map = () => {
   };
 
   const updateLayers = () => {
-    const windDataURL = `https://peterm790.s3.af-south-1.amazonaws.com/petesforecast/ws/${latestDateRef.current}/${latestDateRef.current}_00_${step}_ws`;
+    const baseURL = `https://peterm790.s3.af-south-1.amazonaws.com/petesforecast/ws/${latestDateRef.current}`;
+    const dataURL = `${baseURL}/${latestDateRef.current}_00_${step}_ws`;
 
-    const rasterDataURL = `https://peterm790.s3.af-south-1.amazonaws.com/petesforecast/${selectedVariable}/${latestDateRef.current}/${latestDateRef.current}_00_${step}_${selectedVariable}_${colorScheme}`;
-
-    console.log("Data URL:", rasterDataURL);
+    console.log("Data URL:", dataURL);
 
     // Remove existing layers when updating layers
     ['xyz-layer', 'wind'].forEach((layerId) => {
@@ -159,11 +185,11 @@ const Map = () => {
 
     addXYZTileLayer(
       mapRef.current!,
-      `https://t9iixc9z74.execute-api.af-south-1.amazonaws.com/cog/tilejson.json?url=${rasterDataURL}.tif`
+      `https://t9iixc9z74.execute-api.af-south-1.amazonaws.com/cog/tilejson.json?url=${dataURL}_${colorScheme}.tif`
     );
 
     try {
-      const windLayerInstance = new windLayer(mapRef.current!, windDataURL);
+      const windLayerInstance = new windLayer(mapRef.current!, dataURL);
       mapRef.current!.addLayer(windLayerInstance);
       mapRef.current!.moveLayer(windLayerInstance.id);
     } catch (error) {
@@ -198,6 +224,16 @@ const Map = () => {
 
         <div ref={mapContainerRef} className={styles.map} />
 
+        <div style={{ position: 'fixed', inset: 0, zIndex: drawMode ? 1000 : -1 }}>
+            <Tldraw 
+            onMount={(editor) => {editor.setCurrentTool('draw')}}
+            components={TLcomponents}
+            options={options}
+            cameraOptions={cameraOptions}
+            //hideUi
+            />
+        </div>
+
         <MenuBar 
             step={step} 
             currentDateTime={currentDateTime} 
@@ -209,8 +245,6 @@ const Map = () => {
             drawMode={drawMode}
             toggleColorScheme={toggleColorScheme}
             colorScheme={colorScheme}
-            selectedVariable={selectedVariable}
-            setSelectedVariable={setSelectedVariable}
         />
 
         <div className={styles.aboutButtonContainer}>
