@@ -62,6 +62,7 @@ const Map = () => {
         const data = await response.json();
         console.log("Fetched latest URL:", data.extractedDate);
         latestDateRef.current = data.extractedDate;
+        updateDateTime(); // Ensure date is formatted correctly on first load
       } catch (error) {
         console.error("Error fetching latest data URL:", error);
       }
@@ -120,13 +121,11 @@ const Map = () => {
   }, [step]);
 
   const updateDateTime = () => {
-    const baseDate = new Date();
-    const daysToAdd = Math.floor(step / 8);
-    const hoursToAdd = (step % 8) * 3;
+    const baseDate = new Date(latestDateRef.current.slice(0, 4), latestDateRef.current.slice(4, 6) - 1, latestDateRef.current.slice(6, 8));
+    const forecastHour = step < 121 ? step : 120 + (step - 120) * 3;
 
     const forecastDate = new Date(baseDate);
-    forecastDate.setDate(forecastDate.getDate() + daysToAdd);
-    forecastDate.setHours(hoursToAdd, 0, 0, 0);
+    forecastDate.setHours(forecastDate.getHours() + forecastHour);
 
     const formattedDate = forecastDate.toLocaleDateString('en-GB', {
       day: '2-digit',
@@ -143,11 +142,12 @@ const Map = () => {
   };
 
   const updateLayers = () => {
-    const windDataURL = `https://peterm790.s3.af-south-1.amazonaws.com/petesforecast/ws/${latestDateRef.current}/${latestDateRef.current}_00_${step}_ws`;
+    const formattedStep = step < 121 ? `f${step.toString().padStart(3, '0')}` : `f${(120 + (step - 120) * 3).toString().padStart(3, '0')}`;
+    const windDataURL = `https://petesforecast-input.s3.af-south-1.amazonaws.com/${latestDateRef.current}/ws/${latestDateRef.current}_00_${formattedStep}_ws`;
 
-    const rasterDataURL = `https://peterm790.s3.af-south-1.amazonaws.com/petesforecast/${selectedVariable}/${latestDateRef.current}/${latestDateRef.current}_00_${step}_${selectedVariable}_${colorScheme}`;
+    const rasterDataURL = `https://petesforecast-input.s3.af-south-1.amazonaws.com/${latestDateRef.current}/${selectedVariable}/${latestDateRef.current}_00_${formattedStep}_${selectedVariable}_${colorScheme}`;
 
-    console.log("Data URL:", rasterDataURL);
+    console.log("Raster Data URL:", rasterDataURL);
 
     // Remove existing layers when updating layers
     ['xyz-layer', 'wind'].forEach((layerId) => {
@@ -172,7 +172,12 @@ const Map = () => {
   };
 
   const handleStepChange = (increment: number) => {
-    setStep((prevStep) => Math.max(0, Math.min(prevStep + increment, MAX_STEP)));
+    setStep((prevStep) => {
+      const newStep = prevStep + increment;
+      if (newStep < 0) return 0;
+      if (newStep > 387) return 387;
+      return newStep;
+    });
   };
 
   const formatModelRunDate = (dateString: string) => {

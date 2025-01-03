@@ -357,6 +357,8 @@ export default class WindGlLayer extends abstractGlLayer {
 
     // Fetch data directly from the provided URLs
     const jsonResponse = await fetch(jsonUrl);
+    console.log('json response', jsonResponse);
+
     const imgResponse = await fetch(imgUrl);
 
     const jsonData = await jsonResponse.json();
@@ -365,8 +367,6 @@ export default class WindGlLayer extends abstractGlLayer {
 
     this.windData = rotate(this.windData, jsonData);
     const img = await this.loadBase64Image(imgBase64);
-
-    console.log(jsonData);
 
     this.windTexture = rotate(
       this.windTexture,

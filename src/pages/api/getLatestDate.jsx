@@ -17,8 +17,8 @@ export default async function handler(req, res) {
 
   async function checkDateFolder(dateString) {
     const command = new ListObjectsV2Command({
-      Bucket: "peterm790",
-      Prefix: `petesforecast/wind/${dateString}/`,
+      Bucket: "petesforecast-input",
+      Prefix: `${dateString}/`,
       Delimiter: '/',
       MaxKeys: 1
     });
@@ -74,8 +74,8 @@ export default async function handler(req, res) {
 
 async function getLatestFolder(client) {
   const command = new ListObjectsV2Command({
-    Bucket: "peterm790",
-    Prefix: "petesforecast/wind/",
+    Bucket: "petesforecast-input",
+    Prefix: "",
     Delimiter: "/",
   });
 
@@ -92,7 +92,7 @@ async function getLatestFolder(client) {
     }
 
     const latestFolder = folders.sort((a, b) => b.localeCompare(a))[0];
-    return latestFolder;
+    return latestFolder.replace(/\//g, ''); // Return just the folder name
   } catch (error) {
     console.error("Error fetching latest folder:", error);
     throw error;
