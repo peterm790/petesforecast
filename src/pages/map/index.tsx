@@ -121,7 +121,7 @@ const Map = () => {
   }, [step]);
 
   const updateDateTime = () => {
-    const baseDate = new Date(latestDateRef.current.slice(0, 4), latestDateRef.current.slice(4, 6) - 1, latestDateRef.current.slice(6, 8));
+    const baseDate = new Date(parseInt(latestDateRef.current.slice(0, 4)), parseInt(latestDateRef.current.slice(4, 6)) - 1, parseInt(latestDateRef.current.slice(6, 8)));
     const forecastHour = step < 121 ? step : 120 + (step - 120) * 3;
 
     const forecastDate = new Date(baseDate);
