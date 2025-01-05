@@ -21,7 +21,7 @@
   color: #000; 
   min-height: 20px;
   padding: 4px 8px 4px 8px; 
-  font: 16px Helvetica Neue, Arial, Helvetica, sans-serif;
+  font-size: 1.5vw; /* Scale font size relative to viewport width */
   font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
   font-weight: 400;
 }
@@ -163,7 +163,7 @@
 }
 
 .aboutText {
-  font-size: 14px;
+  font-size: 1.2vw; /* Scale font size relative to viewport width */
   line-height: 1.6;
   color: #333;
 }
