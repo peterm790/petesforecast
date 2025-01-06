@@ -18,7 +18,14 @@ import styles from './styles.module.css';
 import MenuBar from '../../components/MenuBar/MenuBar';
 import AboutPopup from '../../components/About/AboutPopup';
 import Title from '../../components/Title/Title'; 
+
+import Image from 'next/image';
+
+
 const MAX_STEP = 128;
+
+
+
 
 const Map = () => {
   const mapContainerRef = useRef(null);
@@ -31,6 +38,8 @@ const Map = () => {
   const [drawMode, setDrawMode] = useState(false);
   const [colorScheme, setColorScheme] = useState('rainbow');
   const [selectedVariable, setSelectedVariable] = useState('ws');
+
+  const colorbarSrc = `/colorbars/colorbar_${selectedVariable}_${colorScheme}.svg`;
 
   // toggle color scheme
   const toggleColorScheme = () => {
@@ -224,6 +233,15 @@ const Map = () => {
           </button>
         </div>
         {showAbout && <AboutPopup toggleAbout={toggleAbout} />}
+
+        <div className={styles.colorbarcontainer}>
+          <Image
+            src={colorbarSrc}
+            alt="Colorbar"
+            width={400}
+            height={50}
+          />
+        </div>
 
       </div>
 

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="573.12pt" height="57.6pt" viewBox="0 0 573.12 57.6" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2025-01-06T09:45:28.352212</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.10.0, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 57.6 
+L 573.12 57.6 
+L 573.12 0 
+L 0 0 
+L 0 57.6 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 32.596364 50.4 
+L 540.523636 50.4 
+L 540.523636 7.2 
+L 32.596364 7.2 
+L 32.596364 50.4 
+z
+" style="fill: none"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 32.596364 50.4 
+L 7.2 28.8 
+L 32.596364 7.2 
+" style="fill: #fefefe"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 540.523636 50.4 
+L 565.92 28.8 
+L 540.523636 7.2 
+"/>
+   </g>
+   <image xlink:href="data:image/png;base64,
+iVBORw0KGgoAAAANSUhEUgAACEQAAAC0CAYAAACXQmvuAAAJPklEQVR4nO3awXKbShBAURTn/z/4SUZv4T1N1SBFvnXOFjM0A5ZTyr3t+/7cDjwOj27b/fj0S9aYzp+OX3KN4fz7iRlevQ/btj7nO5738oz7OML2eK5e44LnPcy5OuPPNdbemfvijNu2vperM/6s8drnfe4zZrjGMOP+/J4vcrsfH96Oj0/nb9P527bdFte43f5bnuH1+zDPsXof8z7Oa7xnH47vc/19eMc+TM9qXmP9Pq743RruY/V9OLHGe/Zh8TPixDs17cXX8Hn+dzj+9X0bZxjXGGc4vsbXiT8p0wyr9zmdv22fcZ+fMcOwl8M1PmGvz82w9s58wl5P+3hmho/Y68X7vGKGP8NnyL7/Ha/x3L+Oj38Px8fzL5hhccZ9OP9njeM5Xz3juTXWZty2eS+Wn/eZd275nVqf4eX7cOp5L75zF7xT++JennnnXv0ZcmqG5X04Pv7Y5j+uj+G7ivuwxhXXmNYYZzjxfct0jV8xw+I+XnONx/I1PuE+vffXzHBmjs+4z+P39op3bt9O/AP60PTl9Pzl9XP6mfH/AU58QX7BnP96hnGfrphhXOIde726D1fMsLr+dsF7+4bfrRMrrP/M6+9z2uvfsA9/Ts8CAAAAAAAAAPBLCCIAAAAAAAAAgBxBBAAAAAAAAACQI4gAAAAAAAAAAHIEEQAAAAAAAABAjiACAAAAAAAAAMgRRAAAAAAAAAAAOYIIAAAAAAAAACBHEAEAAAAAAAAA5AgiAAAAAAAAAIAcQQQAAAAAAAAAkCOIAAAAAAAAAAByBBEAAAAAAAAAQI4gAgAAAAAAAADIEUQAAAAAAAAAADmCCAAAAAAAAAAgRxABAAAAAAAAAOQIIgAAAAAAAACAHEEEAAAAAAAAAJAjiAAAAAAAAAAAcgQRAAAAAAAAAECOIAIAAAAAAAAAyBFEAAAAAAAAAAA5gggAAAAAAAAAIEcQAQAAAAAAAADkCCIAAAAAAAAAgBxBBAAAAAAAAACQI4gAAAAAAAAAAHIEEQAAAAAAAABAjiACAAAAAAAAAMgRRAAAAAAAAAAAOYIIAAAAAAAAACBHEAEAAAAAAAAA5AgiAAAAAAAAAIAcQQQAAAAAAAAAkCOIAAAAAAAAAAByBBEAAAAAAAAAQI4gAgAAAAAAAADIEUQAAAAAAAAAADmCCAAAAAAAAAAgRxABAAAAAAAAAOQIIgAAAAAAAACAHEEEAAAAAAAAAJAjiAAAAAAAAAAAcgQRAAAAAAAAAECOIAIAAAAAAAAAyBFEAAAAAAAAAAA5gggAAAAAAAAAIEcQAQAAAAAAAADkCCIAAAAAAAAAgBxBBAAAAAAAAACQI4gAAAAAAAAAAHIEEQAAAAAAAABAjiACAAAAAAAAAMgRRAAAAAAAAAAAOYIIAAAAAAAAACBHEAEAAAAAAAAA5AgiAAAAAAAAAIAcQQQAAAAAAAAAkCOIAAAAAAAAAAByBBEAAAAAAAAAQI4gAgAAAAAAAADIEUQAAAAAAAAAADmCCAAAAAAAAAAgRxABAAAAAAAAAOQIIgAAAAAAAACAHEEEAAAAAAAAAJAjiAAAAAAAAAAAcgQRAAAAAAAAAECOIAIAAAAAAAAAyBFEAAAAAAAAAAA5gggAAAAAAAAAIEcQAQAAAAAAAADkCCIAAAAAAAAAgBxBBAAAAAAAAACQI4gAAAAAAAAAAHIEEQAAAAAAAABAjiACAAAAAAAAAMgRRAAAAAAAAAAAOYIIAAAAAAAAACBHEAEAAAAAAAAA5AgiAAAAAAAAAIAcQQQAAAAAAAAAkCOIAAAAAAAAAAByBBEAAAAAAAAAQI4gAgAAAAAAAADIEUQAAAAAAAAAADmCCAAAAAAAAAAgRxABAAAAAAAAAOQIIgAAAAAAAACAHEEEAAAAAAAAAJAjiAAAAAAAAAAAcgQRAAAAAAAAAECOIAIAAAAAAAAAyBFEAAAAAAAAAAA5gggAAAAAAAAAIEcQAQAAAAAAAADkCCIAAAAAAAAAgBxBBAAAAAAAAACQI4gAAAAAAAAAAHIEEQAAAAAAAABAjiACAAAAAAAAAMgRRAAAAAAAAAAAOYIIAAAAAAAAACBHEAEAAAAAAAAA5AgiAAAAAAAAAIAcQQQAAAAAAAAAkCOIAAAAAAAAAAByBBEAAAAAAAAAQI4gAgAAAAAAAADIEUQAAAAAAAAAADmCCAAAAAAAAAAgRxABAAAAAAAAAOQIIgAAAAAAAACAHEEEAAAAAAAAAJAjiAAAAAAAAAAAcgQRAAAAAAAAAECOIAIAAAAAAAAAyBFEAAAAAAAAAAA5gggAAAAAAAAAIEcQAQAAAAAAAADkCCIAAAAAAAAAgBxBBAAAAAAAAACQI4gAAAAAAAAAAHIEEQAAAAAAAABAjiACAAAAAAAAAMgRRAAAAAAAAAAAOYIIAAAAAAAAACBHEAEAAAAAAAAA5AgiAAAAAAAAAIAcQQQAAAAAAAAAkCOIAAAAAAAAAAByBBEAAAAAAAAAQI4gAgAAAAAAAADIEUQAAAAAAAAAADmCCAAAAAAAAAAgRxABAAAAAAAAAOQIIgAAAAAAAACAHEEEAAAAAAAAAJAjiAAAAAAAAAAAcgQRAAAAAAAAAECOIAIAAAAAAAAAyBFEAAAAAAAAAAA5gggAAAAAAAAAIEcQAQAAAAAAAADkCCIAAAAAAAAAgBxBBAAAAAAAAACQI4gAAAAAAAAAAHIEEQAAAAAAAABAjiACAAAAAAAAAMgRRAAAAAAAAAAAOYIIAAAAAAAAACBHEAEAAAAAAAAA5AgiAAAAAAAAAIAcQQQAAAAAAAAAkCOIAAAAAAAAAAByBBEAAAAAAAAAQI4gAgAAAAAAAADIEUQAAAAAAAAAADmCCAAAAAAAAAAgRxABAAAAAAAAAOQIIgAAAAAAAACAHEEEAAAAAAAAAJAjiAAAAAAAAAAAcgQRAAAAAAAAAECOIAIAAAAAAAAAyBFEAAAAAAAAAAA5gggAAAAAAAAAIEcQAQAAAAAAAADkCCIAAAAAAAAAgBxBBAAAAAAAAACQI4gAAAAAAAAAAHIEEQAAAAAAAABAjiACAAAAAAAAAMgRRAAAAAAAAAAAOYIIAAAAAAAAACBHEAEAAAAAAAAA5AgiAAAAAAAAAIAcQQQAAAAAAAAAkPM/yeyjdqmykdwAAAAASUVORK5CYII=" id="image8bb23b7e6f" transform="scale(1 -1) translate(0 -43.2)" x="32.64" y="-6.96" width="507.84" height="43.2"/>
+   <g id="matplotlib.axis_1"/>
+   <g id="matplotlib.axis_2"/>
+   <g id="LineCollection_1"/>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="117.250909" y="31.559375" transform="rotate(-0 117.250909 31.559375)">5</text>
+   </g>
+   <g id="text_2">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="201.905455" y="31.559375" transform="rotate(-0 201.905455 31.559375)">10</text>
+   </g>
+   <g id="text_3">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="286.56" y="31.559375" transform="rotate(-0 286.56 31.559375)">20</text>
+   </g>
+   <g id="text_4">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="371.214545" y="31.559375" transform="rotate(-0 371.214545 31.559375)">30</text>
+   </g>
+   <g id="text_5">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="455.869091" y="31.559375" transform="rotate(-0 455.869091 31.559375)">50</text>
+   </g>
+   <g id="text_6">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="540.523636" y="31.559375" transform="rotate(-0 540.523636 31.559375)">70</text>
+   </g>
+  </g>
+ </g>
+</svg>

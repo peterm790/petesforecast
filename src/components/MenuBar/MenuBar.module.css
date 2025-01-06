@@ -208,6 +208,11 @@
     max-height: 200px; /* Adjust as needed to show all buttons */
   }
 
+  .colorbar {
+    width: 100%; /* Ensure the colorbar takes the full width of the menu bar */
+    margin: 10px 0; /* Add some vertical spacing */
+  }
+
   @media (max-width: 600px) {
     .menuBar {
       font-size: 12px; /* Reduce font size for smaller screens */
