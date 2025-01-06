@@ -8,6 +8,7 @@
     position: absolute;
     width: 100%;
     height: 100%;
+    cursor: pointer; 
 }
 
 .title {
@@ -215,7 +216,6 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-
 .drawButton {
   background-color: #ffffff;
   border: none;
@@ -258,4 +258,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.mouseCoords {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 8px;
+  z-index: 10;
+  pointer-events: none; /* Ensure it doesn't interfere with mouse events */
 }

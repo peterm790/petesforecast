@@ -37,6 +37,9 @@ const Map = () => {
   const [drawMode, setDrawMode] = useState(false);
   const [colorScheme, setColorScheme] = useState('rainbow');
   const [selectedVariable, setSelectedVariable] = useState('ws');
+  const [mouseCoords, setMouseCoords] = useState<{ lat: number; lon: number } | null>(null);
+  const [mousePosition, setMousePosition] = useState<{ x: number; y: number } | null>(null);
+  const [showCoords, setShowCoords] = useState(true);
 
   const colorbarSrc = `/colorbars/colorbar_${selectedVariable}_${colorScheme}.svg`;
 
@@ -123,6 +126,14 @@ const Map = () => {
         });
 
         mapRef.current.addControl(new maplibregl.NavigationControl(), 'top-right');
+
+        mapRef.current.on('movestart', () => {
+          setShowCoords(false);
+        });
+
+        mapRef.current.on('moveend', () => {
+          setShowCoords(true);
+        });
       }
     };
 
@@ -152,6 +163,22 @@ const Map = () => {
   useEffect(() => {
     updateDateTime();
   }, [step]);
+
+  useEffect(() => {
+    if (mapRef.current && mapInitialized) {
+      const handleMouseMove = (e: maplibregl.MapMouseEvent) => {
+        const { lng, lat } = e.lngLat;
+        setMouseCoords({ lat, lon: lng });
+        setMousePosition({ x: e.point.x, y: e.point.y });
+      };
+
+      mapRef.current.on('mousemove', handleMouseMove);
+
+      return () => {
+        mapRef.current?.off('mousemove', handleMouseMove);
+      };
+    }
+  }, [mapInitialized]);
 
   const updateDateTime = () => {
     const baseDate = new Date(
@@ -239,6 +266,15 @@ const Map = () => {
         <Title />
 
         <div ref={mapContainerRef} className={styles.map} />
+
+        {mouseCoords && mousePosition && showCoords && (
+          <div
+            className={styles.mouseCoords}
+            style={{ top: mousePosition.y - 30, left: mousePosition.x - 10 }}
+          >
+            {mouseCoords.lat.toFixed(4)}, {mouseCoords.lon.toFixed(4)}
+          </div>
+        )}
 
         <MenuBar 
             step={step} 
