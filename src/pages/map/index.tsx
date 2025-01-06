@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import { Analytics } from "@vercel/analytics/react";
+import { useRouter } from 'next/router';
 
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -21,17 +22,15 @@ import Title from '../../components/Title/Title';
 
 import Image from 'next/image';
 
-
 const MAX_STEP = 128;
 
-
-
-
 const Map = () => {
+  const router = useRouter();
   const mapContainerRef = useRef(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const latestDateRef = useRef('');
   const [mapInitialized, setMapInitialized] = useState(false);
+  const [stateInitialized, setStateInitialized] = useState(false);
   const [step, setStep] = useState(0);
   const [currentDateTime, setCurrentDateTime] = useState('');
   const [showAbout, setShowAbout] = useState(false);
@@ -41,49 +40,74 @@ const Map = () => {
 
   const colorbarSrc = `/colorbars/colorbar_${selectedVariable}_${colorScheme}.svg`;
 
-  // toggle color scheme
+  // Initialize state from URL query parameters after router is ready
+  useEffect(() => {
+    if (router.isReady) {
+      setStep(parseInt(router.query.step as string) || 0);
+      setColorScheme(router.query.colorScheme as string || 'rainbow');
+      setSelectedVariable(router.query.selectedVariable as string || 'ws');
+      setStateInitialized(true);
+    }
+  }, [router.isReady]);
+
+  // Update URL query parameters
+  useEffect(() => {
+    if (router.isReady && stateInitialized) {
+      router.push({
+        pathname: router.pathname,
+        query: {
+          ...router.query,
+          step,
+          colorScheme,
+          selectedVariable,
+        },
+      }, undefined, { shallow: true });
+    }
+  }, [step, colorScheme, selectedVariable, stateInitialized]);
+
+  // Toggle color scheme
   const toggleColorScheme = () => {
     setColorScheme((prevScheme) => (prevScheme === 'rainbow' ? 'cmocean' : 'rainbow'));
   };
 
-  // toggle about popup
+  // Toggle about popup
   const toggleAbout = () => setShowAbout(!showAbout);
 
-  // needed to init protomaps protocol
+  // Initialize Protomaps protocol
   useEffect(() => {
     console.log("Setting up Protomaps protocol");
-    let protocol = new Protocol();
+    const protocol = new Protocol();
     maplibregl.addProtocol("pmtiles", protocol.tile);
     return () => {
       maplibregl.removeProtocol("pmtiles");
     };
   }, []);
 
-  // initialize map
+  // Fetch latest date and initialize map
   useEffect(() => {
+    if (!stateInitialized) return;
+
     console.log("Initializing map");
     if (!mapContainerRef.current || mapRef.current || mapInitialized) return;
 
-    // fetch latest date
     const fetchLatestDate = async () => {
       try {
         const response = await fetch('/api/getLatestDate');
         const data = await response.json();
         console.log("Fetched latest URL:", data.extractedDate);
         latestDateRef.current = data.extractedDate;
-        updateDateTime(); // Ensure date is formatted correctly on first load
+        updateDateTime();
+        initializeMap();
       } catch (error) {
         console.error("Error fetching latest data URL:", error);
       }
     };
     fetchLatestDate();
 
-    // Default to cape town
     const defaultCenter: [number, number] = [22.9375, -30.5595];
 
-    const initializeMap = (center: [number, number]) => {
+    const initializeMap = (center: [number, number] = defaultCenter) => {
       if (mapContainerRef.current) {
-        // Initialize the base map
         mapRef.current = new maplibregl.Map({
           container: mapContainerRef.current,
           style: baseMapStyle,
@@ -110,14 +134,14 @@ const Map = () => {
         },
         () => {
           console.log("Geolocation failed, using default coordinates");
-          initializeMap(defaultCenter);
+          initializeMap();
         }
       );
     } else {
       console.log("Geolocation not supported, using default coordinates");
-      initializeMap(defaultCenter);
+      initializeMap();
     }
-  }, [mapInitialized]);
+  }, [mapInitialized, stateInitialized]);
 
   useEffect(() => {
     if (mapRef.current && mapInitialized) {
@@ -130,7 +154,11 @@ const Map = () => {
   }, [step]);
 
   const updateDateTime = () => {
-    const baseDate = new Date(parseInt(latestDateRef.current.slice(0, 4)), parseInt(latestDateRef.current.slice(4, 6)) - 1, parseInt(latestDateRef.current.slice(6, 8)));
+    const baseDate = new Date(
+      parseInt(latestDateRef.current.slice(0, 4)),
+      parseInt(latestDateRef.current.slice(4, 6)) - 1,
+      parseInt(latestDateRef.current.slice(6, 8))
+    );
     const forecastHour = step < 121 ? step : 120 + (step - 120) * 3;
 
     const forecastDate = new Date(baseDate);
