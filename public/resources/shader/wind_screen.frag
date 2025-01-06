@@ -1,4 +1,4 @@
-precision highp float;
+precision mediump float;
 
 uniform sampler2D u_screen;
 uniform float u_opacity;
@@ -11,7 +11,7 @@ void main() {
     vec4 finalColor = vec4(floor(255.0 * color * u_opacity) / 255.0);
     // set opacity to 1 if above a threshold
     if (finalColor.a > 0.95) {
-        finalColor.a = 1.0;
+        finalColor.a = 1.00;
     }
     gl_FragColor = finalColor;
 }
