@@ -9,7 +9,7 @@ const MenuBar = ({
   MAX_STEP, 
   formatModelRunDate, 
   latestDate,
-  toggleDrawMode,
+  toggleDrawMenu,
   drawMode,
   toggleColorScheme,
   colorScheme,
@@ -106,7 +106,7 @@ const MenuBar = ({
         <button onClick={toggleColorScheme} className={styles.colorButton} aria-label="Toggle color scheme">
           <FaPalette className={colorScheme === 'rainbow' ? styles.active : ''} />
         </button>
-        <button onClick={toggleDrawMode} className={styles.drawButton} aria-label="Toggle draw mode">
+        <button onClick={() => toggleDrawMenu(true)} className={styles.drawButton} aria-label="Toggle draw mode">
           <FaPencilAlt className={drawMode ? styles.active : ''} />
         </button>
       </div>

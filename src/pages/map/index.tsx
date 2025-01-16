@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import Head from 'next/head';
 import { Analytics } from "@vercel/analytics/react";
 import { useRouter } from 'next/router';
@@ -22,6 +22,11 @@ import Title from '../../components/Title/Title';
 
 import Image from 'next/image';
 
+import { TerraDraw, TerraDrawCircleMode, TerraDrawFreehandMode, TerraDrawLineStringMode, TerraDrawPointMode, TerraDrawPolygonMode, TerraDrawSelectMode } from "terra-draw";
+import { TerraDrawMapLibreGLAdapter } from 'terra-draw-maplibre-gl-adapter';
+
+import DrawMenuBar from '../../components/DrawMenuBar/DrawMenuBar';
+
 const MAX_STEP = 128;
 
 const Map = () => {
@@ -34,12 +39,13 @@ const Map = () => {
   const [step, setStep] = useState(0);
   const [currentDateTime, setCurrentDateTime] = useState('');
   const [showAbout, setShowAbout] = useState(false);
-  const [drawMode, setDrawMode] = useState(false);
   const [colorScheme, setColorScheme] = useState('rainbow');
   const [selectedVariable, setSelectedVariable] = useState('ws');
   const [mouseCoords, setMouseCoords] = useState<{ lat: number; lon: number } | null>(null);
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number } | null>(null);
   const [showCoords, setShowCoords] = useState(true);
+  const [drawMenuVisible, setDrawMenuVisible] = useState(false);
+  const [drawMode, setDrawMode] = useState<string | null>(null);
 
   const colorbarSrc = `/colorbars/colorbar_${selectedVariable}_${colorScheme}.svg`;
 
@@ -154,31 +160,54 @@ const Map = () => {
     }
   }, [mapInitialized, stateInitialized]);
 
-  useEffect(() => {
-    if (mapRef.current && mapInitialized) {
-      updateLayers();
+  const draw = useMemo(() => {
+    if (mapRef.current) {
+      const terraDraw = new TerraDraw({
+        adapter: new TerraDrawMapLibreGLAdapter({ map: mapRef.current, lib: maplibregl }),
+        modes: [
+          new TerraDrawCircleMode(),
+          new TerraDrawFreehandMode(),
+          new TerraDrawLineStringMode(),
+          new TerraDrawPointMode(),
+          new TerraDrawPolygonMode(),
+          new TerraDrawSelectMode()
+        ],
+      });
+      terraDraw.start();
+      console.log('TerraDraw initialized and started', terraDraw);
+      return terraDraw;
     }
-  }, [step, colorScheme, mapInitialized, selectedVariable]);
+  }, [mapRef.current]);
+
+  const changeMode = useCallback(
+    (newMode: string) => {
+      if (draw) {
+        setDrawMode(newMode);
+        draw.setMode(newMode);
+        console.log(`Draw mode set to: ${newMode}`);
+      }
+    },
+    [draw]
+  );
 
   useEffect(() => {
-    updateDateTime();
-  }, [step]);
-
-  useEffect(() => {
-    if (mapRef.current && mapInitialized) {
-      const handleMouseMove = (e: maplibregl.MapMouseEvent) => {
-        const { lng, lat } = e.lngLat;
-        setMouseCoords({ lat, lon: lng });
-        setMousePosition({ x: e.point.x, y: e.point.y });
-      };
-
-      mapRef.current.on('mousemove', handleMouseMove);
-
-      return () => {
-        mapRef.current?.off('mousemove', handleMouseMove);
-      };
+    if (draw) {
+      console.log("Draw instance available:", draw);
     }
-  }, [mapInitialized]);
+  }, [draw]);
+
+  const toggleDrawMenu = () => {
+    console.log("Toggling draw menu"); // Log the action
+    if (draw) {
+      setDrawMode('select');
+      draw.setMode('select');
+    }
+    setDrawMenuVisible((prevVisible) => {return !prevVisible;});
+ };
+
+  const onModeSelect = (mode: string) => {
+    changeMode(mode);
+  };
 
   const updateDateTime = () => {
     const baseDate = new Date(
@@ -252,10 +281,6 @@ const Map = () => {
     return `${day}/${month}/${year}`;
   };
 
-  const toggleDrawMode = () => {
-    setDrawMode((prevDrawMode) => !prevDrawMode);
-  };
-
   return (
     <>
       <Head>
@@ -276,20 +301,23 @@ const Map = () => {
           </div>
         )}
 
-        <MenuBar 
+        {drawMenuVisible ? (
+          <DrawMenuBar toggleDrawMenu={toggleDrawMenu} onModeSelect={onModeSelect} />
+        ) : (
+          <MenuBar 
             step={step} 
             currentDateTime={currentDateTime} 
             handleStepChange={handleStepChange} 
             MAX_STEP={MAX_STEP} 
             formatModelRunDate={formatModelRunDate} 
             latestDate={latestDateRef.current}
-            toggleDrawMode={toggleDrawMode}
-            drawMode={drawMode}
+            toggleDrawMenu={toggleDrawMenu}
             toggleColorScheme={toggleColorScheme}
             colorScheme={colorScheme}
             selectedVariable={selectedVariable}
             setSelectedVariable={setSelectedVariable}
-        />
+          />
+        )}
 
         <div className={styles.aboutButtonContainer}>
           <button onClick={toggleAbout} className={styles.aboutButton}>
