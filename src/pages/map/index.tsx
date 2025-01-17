@@ -1,31 +1,42 @@
+// React and Next.js imports
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import Head from 'next/head';
-import { Analytics } from "@vercel/analytics/react";
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 
-import maplibregl from 'maplibre-gl';
+// Third-party libraries
+import maplibregl, { StyleSpecification } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { Protocol } from 'pmtiles';
+import { Analytics } from "@vercel/analytics/react";
 
+// Terra Draw related imports
+import { 
+  TerraDraw, 
+  TerraDrawCircleMode, 
+  TerraDrawFreehandMode, 
+  TerraDrawLineStringMode, 
+  TerraDrawPointMode, 
+  TerraDrawPolygonMode, 
+  TerraDrawSelectMode 
+} from "terra-draw";
+import { TerraDrawMapLibreGLAdapter } from 'terra-draw-maplibre-gl-adapter';
+
+// Local components
+import MenuBar from '../../components/MenuBar/MenuBar';
+import AboutPopup from '../../components/About/AboutPopup';
+import Title from '../../components/Title/Title';
+import DrawMenuBar from '../../components/DrawMenuBar/DrawMenuBar';
+
+// Styles and assets
+import styles from './styles.module.css';
+import baseMapStyleJson from '../../styles/basemapstyle.json';
+
+// Layers
 import { addXYZTileLayer } from '../../layers/rasterLayer';
 import windLayer from "../../layers/streamlines/windLayer";
 
-import { StyleSpecification } from 'maplibre-gl';
-import baseMapStyleJson from '../../styles/basemapstyle.json';
 const baseMapStyle: StyleSpecification = baseMapStyleJson as StyleSpecification;
-
-import styles from './styles.module.css';
-
-import MenuBar from '../../components/MenuBar/MenuBar';
-import AboutPopup from '../../components/About/AboutPopup';
-import Title from '../../components/Title/Title'; 
-
-import Image from 'next/image';
-
-import { TerraDraw, TerraDrawCircleMode, TerraDrawFreehandMode, TerraDrawLineStringMode, TerraDrawPointMode, TerraDrawPolygonMode, TerraDrawSelectMode } from "terra-draw";
-import { TerraDrawMapLibreGLAdapter } from 'terra-draw-maplibre-gl-adapter';
-
-import DrawMenuBar from '../../components/DrawMenuBar/DrawMenuBar';
 
 const MAX_STEP = 128;
 
@@ -163,7 +174,7 @@ const Map = () => {
   const draw = useMemo(() => {
     if (mapRef.current) {
       const terraDraw = new TerraDraw({
-        adapter: new TerraDrawMapLibreGLAdapter({ map: mapRef.current, lib: maplibregl }),
+        adapter: new TerraDrawMapLibreGLAdapter({ map: mapRef.current}),
         modes: [
           new TerraDrawCircleMode(),
           new TerraDrawFreehandMode(),
@@ -234,6 +245,13 @@ const Map = () => {
     setCurrentDateTime(`${formattedDate} ${formattedTime}`);
   };
 
+  // Update date/time when step changes
+  useEffect(() => {
+    if (latestDateRef.current) {
+      updateDateTime();
+    }
+  }, [step]);
+
   const updateLayers = () => {
     const formattedStep = step < 121 ? `f${step.toString().padStart(3, '0')}` : `f${(120 + (step - 120) * 3).toString().padStart(3, '0')}`;
     const windDataURL = `https://petesforecast-input.s3.af-south-1.amazonaws.com/${latestDateRef.current}/ws/${latestDateRef.current}_00_${formattedStep}_ws`;
@@ -263,6 +281,12 @@ const Map = () => {
       console.error("Error adding wind layer:", error);
     }
   };
+
+  // Update layers when dependencies change
+  useEffect(() => {
+    if (!mapInitialized || !stateInitialized || !latestDateRef.current) return;
+    updateLayers();
+  }, [step, colorScheme, selectedVariable, stateInitialized, mapInitialized]);
 
   const handleStepChange = (increment: number) => {
     setStep((prevStep) => {
