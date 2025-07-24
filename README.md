@@ -27,8 +27,7 @@ The frontend of this site is built on top of a number of open-source tools. Thes
 - And WebGL Wind is, of course, inspired by the real OG of wind animation, [earth.nullschool.net](https://earth.nullschool.net).
 - [MapLibre](https://maplibre.org) for the map itself.
 
-I have kept the GitHub repo behind this frontend private in part because I am embarrassed by the quality of my code and in part to obscure some of the APIs. I plan to change this soon.
-To Run Locally 
+The code behind this website is publicly available at [github.com/peterm790/petesforecast](https://github.com/peterm790/petesforecast).
 
 ```bash
 rm -rf node_modules package-lock.json

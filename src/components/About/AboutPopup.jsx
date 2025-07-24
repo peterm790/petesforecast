@@ -44,7 +44,7 @@ const AboutPopup = ({ toggleAbout }) => {
             <li><a href="https://maplibre.org" target="_blank" rel="noopener noreferrer">MapLibre</a> for the map itself.</li>
           </ul>
           <p>
-            I have kept the GitHub repo behind this frontend private in part because I am embarrassed by the quality of my code and in part to obscure some of the APIs. I plan to change this soon.
+            The code behind this website is publicly available at <a href="https://github.com/peterm790/petesforecast" target="_blank" rel="noopener noreferrer">github.com/peterm790/petesforecast</a>.
           </p>
         </div>
         <div className={styles.buttonContainer}>
