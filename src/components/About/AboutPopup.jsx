@@ -11,7 +11,7 @@ const AboutPopup = ({ toggleAbout }) => {
             This website is the product of previous frustrations trying to <a href="https://petemarsh.com/wrf" target="_blank" rel="noopener noreferrer">share weather forecast data</a>, <a href="https://www.weathersa.co.za/Documents/Corporate/Record_Rains_July_2024_Media_Release_12August_2024_12082024154436.pdf" target="_blank" rel="noopener noreferrer">an unusually rainy Cape Town winter</a>, and a few too many Sundays spent at my desk!
           </p>
           <p>
-            The forecast shown here is the 00z initialization of the NCEP GFS forecast. The forecast will be updated daily at 7:30 am (all times are in UTC). 16 days of forecast data are available in 3-hourly time steps. Make use of the arrows in the top left to jump in 3- or 12-hour steps.
+            The forecast shown here is the 00z initialization of the NCEP GFS forecast. The forecast will be updated daily at 7:30 am (all times are in UTC). 16 days of forecast data are available in 1-hourly time steps. Make use of the arrows in the top left to jump in 1- or 6-hour steps.
           </p>
           <p>
             No demo or subscription APIs are used for this application. The site itself is deployed on Vercel, the tiling endpoints are AWS Lambda functions, and the weather data is updated using a Modal cron job.
@@ -20,7 +20,7 @@ const AboutPopup = ({ toggleAbout }) => {
             The weather data component of this application is run from <a href="https://gist.github.com/peterm790/97cb15037f6b51ea86e3bc8d448eb141" target="_blank" rel="noopener noreferrer">a single Python script</a>, which makes use of:
           </p>
           <ul>
-            <li><a href="https://modal.com" target="_blank" rel="noopener noreferrer">Modal</a> to remotely host and run the Python script.</li>
+            <li><a href="https://gist.github.com/peterm790/97cb15037f6b51ea86e3bc8d448eb141" target="_blank" rel="noopener noreferrer">Modal</a> to remotely host and run the Python script.</li>
             <li><a href="https://docs.xarray.dev/en/stable/#" target="_blank" rel="noopener noreferrer">Xarray</a> to process the data.</li>
             <li><a href="https://github.com/corteva/rioxarray" target="_blank" rel="noopener noreferrer">Rioxarray</a> for creating Cloud Optimized GeoTiffs.</li>
             <li><a href="https://github.com/fsspec/kerchunk" target="_blank" rel="noopener noreferrer">Kerchunk</a> for easy and efficient access to the <a href="https://github.com/peterm790/lambda_GFS_reference" target="_blank" rel="noopener noreferrer">latest GFS forecast data</a>.</li>
