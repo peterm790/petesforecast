@@ -5,7 +5,7 @@ export default function Index() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace('/map');
+    router.replace('/map_old');
   }, []);
 
   return null;
